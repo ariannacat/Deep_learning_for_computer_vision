@@ -1,0 +1,48 @@
+# --- Python cache / build ---
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+build/
+dist/
+
+# --- Virtual environments ---
+.venv/
+venv/
+env/
+ENV/
+
+# --- OS / IDE files ---
+.DS_Store
+.idea/
+.vscode/
+Thumbs.db
+
+# --- Data / models (never commit large binaries) ---
+data/
+models/
+*.pt
+*.pth
+*.onnx
+*.weights
+*.zip
+
+# --- Logs and outputs ---
+logs/
+*.log
+*.tmp
+outputs/
+runs/
+
+# --- Jupyter ---
+.ipynb_checkpoints/
+
+# --- Pre-commit / tools cache ---
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.coverage
+htmlcov/
+

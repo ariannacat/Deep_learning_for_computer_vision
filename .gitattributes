@@ -1,0 +1,18 @@
+# Normalize line endings for all text files
+* text=auto eol=lf
+
+# Treat Jupyter notebooks as text so diffs work better
+*.ipynb text
+
+# Handle Python source files
+*.py text diff=python
+
+# Keep images and models as binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.pt binary
+*.onnx binary
+*.weights binary
+*.zip binary
+

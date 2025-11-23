@@ -1,0 +1,58 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pokeai"
+version = "0.1.0"
+description = "Screenshot → parse Pokémon/HP/moves → recognize species → choose best move"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "Arianna Castellini" },
+	{name = "Ivana Crescenzi"},
+	{name = "Chiara Ceccagnoli"}]
+license = { text = "MIT" }
+keywords = ["pokemon", "computer-vision", "ocr", "yolo", "torchvision", "decision-making"]
+
+dependencies = [
+  "torch",
+  "torchvision",
+  "ultralytics",
+  "opencv-python",        # use opencv-python-headless on servers/CI
+  "pillow",
+  "pytesseract",
+  "numpy",
+  "pandas",
+  "scikit-learn",
+  "tqdm",
+  "matplotlib",
+  "seaborn",
+  "pyyaml"                
+  "rich"               
+]
+
+
+[project.optional-dependencies]
+dev = [
+  "pytest",
+  "ruff",
+  "pre-commit"
+]
+
+[project.scripts]
+pokeai = "cli.pokeai_cli:main"
+
+# --- Setuptools config for src/ layout ---
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+# --- Optional tool configs (you can tweak later) ---
+[tool.pytest.ini_options]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+
