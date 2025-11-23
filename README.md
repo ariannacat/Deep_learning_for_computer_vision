@@ -1,1 +1,2 @@
-# Deep_learning_for_computer_vision
+# Deep Learning for Computer Vision Project
+# Pokemon Battle Assistant
