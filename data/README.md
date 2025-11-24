@@ -13,10 +13,4 @@ This directory stores input data and sample images.
 ## Notes
 - Do **not** commit large or copyrighted datasets.
 - Use small, public, or synthetic examples for demos.
-- `samples/` — Example battle screenshots for testing the pipeline.
-- `type_charts/` — Optional JSON or CSV files for Pokémon type effectiveness.
-
-## Notes
-- Do **not** commit large or copyrighted datasets.
-- Use small, public, or synthetic examples for demos.
 
