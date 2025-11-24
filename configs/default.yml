@@ -1,0 +1,26 @@
+# Default configuration for Pokémon Battle Advisor
+
+# --- General settings ---
+device: "cuda"        # "cuda" or "cpu"
+model_backend: "yolo" # or "torchvision"
+confidence_threshold: 0.5
+ocr_lang: "eng"
+
+# --- Paths ---
+paths:
+  models_dir: "models"
+  data_dir: "data"
+  tesseract_cmd: "/usr/bin/tesseract"  # Adjust for your OS if needed
+
+# --- OCR parameters ---
+ocr:
+  psm: 6      # Page segmentation mode (6 = assume a single uniform block of text)
+  oem: 3      # OCR engine mode
+  preprocess: true
+
+# --- Decision parameters ---
+decision:
+  use_stab: true
+  use_type_chart: true
+  random_tiebreak: true
+

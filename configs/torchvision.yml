@@ -1,0 +1,7 @@
+# Torchvision-specific configuration
+model_name: "resnet50"
+num_classes: 151
+pretrained: true
+weights_path: "models/resnet50-pokemon.pt"
+img_size: 224
+

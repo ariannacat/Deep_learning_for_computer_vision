@@ -1,0 +1,6 @@
+# Example paths configuration for reference
+
+models_dir: "/home/user/pokemon-battle-advisor/models"
+data_dir: "/home/user/pokemon-battle-advisor/data"
+tesseract_cmd: "/usr/bin/tesseract"
+

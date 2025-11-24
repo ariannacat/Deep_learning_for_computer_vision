@@ -1,0 +1,21 @@
+# Core dependencies
+torch
+torchvision
+ultralytics
+opencv-python
+pillow
+pytesseract
+numpy
+pandas
+scikit-learn
+tqdm
+matplotlib
+seaborn
+pyyaml
+
+# Optional tools (for CLI and development)
+rich
+pytest
+ruff
+pre-commit
+
