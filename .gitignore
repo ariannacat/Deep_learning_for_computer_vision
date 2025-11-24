@@ -29,6 +29,11 @@ models/
 *.weights
 *.zip
 
+# …but keep these:
+!data/README.md
+!data/samples/**
+!data/csv/**
+
 # --- Logs and outputs ---
 logs/
 *.log
