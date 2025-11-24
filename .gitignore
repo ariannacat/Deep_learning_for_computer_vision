@@ -21,6 +21,14 @@ ENV/
 Thumbs.db
 
 # --- Data / models (never commit large binaries) ---
+# …but keep these:
+!data/README.md
+!data/samples/**
+!data/csv/**
+!models/README.md
+!models/.gitkeep
+!models/registry.yaml
+
 data/
 models/
 *.pt
@@ -28,11 +36,6 @@ models/
 *.onnx
 *.weights
 *.zip
-
-# …but keep these:
-!data/README.md
-!data/samples/**
-!data/csv/**
 
 # --- Logs and outputs ---
 logs/
