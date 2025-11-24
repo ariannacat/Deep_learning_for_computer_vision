@@ -3,11 +3,6 @@
 This directory stores input data and sample images.
 
 ## Structure
-- `pokemons/` - Pokemon images for classifier training# Data Folder
-
-This directory stores input data and resources for the Pokémon Battle Advisor.
-
-## Structure
 - `pokemons/` — Pokémon images for classifier training.
 - `samples/` — Example battle screenshots for testing the pipeline.
 - `csv/` — Structured datasets used by the decision logic.
