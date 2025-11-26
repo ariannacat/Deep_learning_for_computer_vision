@@ -24,13 +24,37 @@ This project combines computer vision and game logic to automatically read a Pok
 
 ## Installation
 ```bash
-pip install -e .
+pip install -e .```
 
 ---
 
 ## Usage
 ```bash
-pokeai run data/samples/example.png --config configs/default.yaml
+pokeai run data/samples/example.png --config configs/default.yaml```
+
+## Setup
+Before running the project, make sure the helper scripts are executable.
+Run these commands once from the project root:
+```bash
+chmod +x scripts/download_models.sh
+chmod +x scripts/setup_tesseract.sh
+chmod +x scripts/dev_install.sh```
+
+````bash
+pip install -e ".[dev]"```
+
+Install Tesseract OCR (required for text extraction):
+
+* MacOS:
+````bash
+brew install tesseract```
+
+* Windows:
+Download the installer from: https://github.com/UB-Mannheim/tesseract/wiki 
+
+Finally, download the model weights (YOLO/Torchvision) stored externally:
+````bash
+./scripts/download_models.sh```
 
 ## License
 MIT License (see LICENSE file)
