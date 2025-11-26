@@ -40,23 +40,27 @@ Run these commands once from the project root:
 ```bash
 chmod +x scripts/download_models.sh
 chmod +x scripts/setup_tesseract.sh
-chmod +x scripts/dev_install.sh```
+chmod +x scripts/dev_install.sh
+```
 
 ````bash
-pip install -e ".[dev]"```
+pip install -e ".[dev]"
+```
 
 Install Tesseract OCR (required for text extraction):
 
 * MacOS:
 ````bash
-brew install tesseract```
+brew install tesseract
+```
 
 * Windows:
 Download the installer from: https://github.com/UB-Mannheim/tesseract/wiki 
 
 Finally, download the model weights (YOLO/Torchvision) stored externally:
 ````bash
-./scripts/download_models.sh```
+./scripts/download_models.sh
+```
 
 ## License
 MIT License (see LICENSE file)
