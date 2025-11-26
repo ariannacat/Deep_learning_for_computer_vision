@@ -50,7 +50,7 @@ pip install -e ".[dev]"
 Install Tesseract OCR (required for text extraction):
 
 * MacOS:
-````bash
+```bash
 brew install tesseract
 ```
 
