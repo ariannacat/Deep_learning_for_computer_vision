@@ -43,7 +43,7 @@ chmod +x scripts/setup_tesseract.sh
 chmod +x scripts/dev_install.sh
 ```
 
-````bash
+```bash
 pip install -e ".[dev]"
 ```
 
