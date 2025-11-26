@@ -58,7 +58,7 @@ brew install tesseract
 Download the installer from: https://github.com/UB-Mannheim/tesseract/wiki 
 
 Finally, download the model weights (YOLO/Torchvision) stored externally:
-````bash
+```bash
 ./scripts/download_models.sh
 ```
 
