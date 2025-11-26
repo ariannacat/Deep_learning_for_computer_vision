@@ -24,13 +24,15 @@ This project combines computer vision and game logic to automatically read a Pok
 
 ## Installation
 ```bash
-pip install -e .```
+pip install -e .
+```
 
 ---
 
 ## Usage
 ```bash
-pokeai run data/samples/example.png --config configs/default.yaml```
+pokeai run data/samples/example.png --config configs/default.yaml
+```
 
 ## Setup
 Before running the project, make sure the helper scripts are executable.
