@@ -1,4 +1,4 @@
-# Models Folder
+# Artifacts
 
 This directory will store all trained model weights and related artifacts.
 
