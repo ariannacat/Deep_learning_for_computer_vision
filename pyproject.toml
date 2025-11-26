@@ -27,7 +27,7 @@ dependencies = [
   "tqdm",
   "matplotlib",
   "seaborn",
-  "pyyaml"                
+  "pyyaml",                
   "rich"               
 ]
 
@@ -40,7 +40,7 @@ dev = [
 ]
 
 [project.scripts]
-pokeai = "cli.pokeai_cli:main"
+pokeai = "pokeai.cli:main"
 
 # --- Setuptools config for src/ layout ---
 [tool.setuptools]
