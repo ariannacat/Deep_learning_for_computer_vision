@@ -3,6 +3,7 @@ Utility functions for loading CSV datasets used by the decision engine.
 """
 
 from pathlib import Path
+from typing import List, Union
 import pandas as pd
 
 
@@ -59,4 +60,20 @@ def load_move_name_list(move_details_path: str = DEFAULT_MOVE_DETAILS_CSV) -> Li
     )
 
     return moves
+
+def load_classes_txt(path: Union[str, Path]) -> List[str]:
+    """
+    Load class names (one per line) from a classes.txt file.
+
+    Used by the vision module to know the index→label mapping.
+    """
+    p = Path(path)
+    if not p.is_file():
+        raise FileNotFoundError(f"classes.txt not found at {p}")
+
+    lines = p.read_text(encoding="utf-8").splitlines()
+    classes = [ln.strip() for ln in lines if ln.strip()]
+    if not classes:
+        raise ValueError(f"No classes found in {p}")
+    return classes
 
