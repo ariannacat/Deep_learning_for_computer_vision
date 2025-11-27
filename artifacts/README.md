@@ -12,7 +12,7 @@ main pipeline.
 ---
 
 ## Folder structure
-
+```kotlin
 artifacts/
 ├─ classes.txt
 │
@@ -20,47 +20,47 @@ artifacts/
 ├─ test_split.csv
 │
 ├─ folds/
-│ ├─ fold_1/
-│ │ ├─ train.csv
-│ │ └─ val.csv
-│ ├─ fold_2/
-│ └─ ...
+│   ├─ fold_1/
+│   │   ├─ train.csv
+│   │   └─ val.csv
+│   ├─ fold_2/
+│   └─ ...
 │
 ├─ fold_summaries/
-│ └─ resnet18.csv
+│   └─ resnet18.csv
 │
 ├─ best_resnet18_fold1.pth
 ├─ best_resnet18_fold2.pth
-│ ... (Torchvision weights — ignored by git)
+│   ... (Torchvision weights — ignored by git)
 │
 ├─ yolo_folds/
-│ ├─ fold_1/
-│ │ ├─ train/<class>/<img>.png
-│ │ └─ val/<class>/<img>.png
-│ ├─ fold_2/
-│ └─ ...
+│   ├─ fold_1/
+│   │   ├─ train/<class>/<img>.png
+│   │   └─ val/<class>/<img>.png
+│   ├─ fold_2/
+│   └─ ...
 │
 ├─ yolo_cls_runs/
-│ ├─ pokemon_yolo_cls_fold1/
-│ │ └─ weights/best.pt
-│ ├─ pokemon_yolo_cls_fold2/
-│ └─ ...
+│   ├─ pokemon_yolo_cls_fold1/
+│   │   └─ weights/best.pt
+│   ├─ pokemon_yolo_cls_fold2/
+│   └─ ...
 │
 ├─ reports/
-│ ├─ test_grid_resnet18.png
-│ ├─ test_classification_report_resnet18.txt
-│ ├─ test_confusion_matrix_resnet18.csv
-│ ├─ test_summary_aggregated.csv
-│ └─ augmented/
-│ ├─ test_grid_resnet18_white_noise.png
-│ └─ ...
+│   ├─ test_grid_resnet18.png
+│   ├─ test_classification_report_resnet18.txt
+│   ├─ test_confusion_matrix_resnet18.csv
+│   ├─ test_summary_aggregated.csv
+│   └─ augmented/
+│        ├─ test_grid_resnet18_white_noise.png
+│        └─ ...
 │
 └─ test_summaries/
-├─ test_summary_resnet18.csv
-└─ augmented/
-├─ test_summary_resnet18_white_noise.csv
-└─ ...
----
+    ├─ test_summary_resnet18.csv
+    └─ augmented/
+        ├─ test_summary_resnet18_white_noise.csv
+        └─ ...
+```
 
 ## What belongs here?
 
@@ -138,6 +138,7 @@ These are ignored by `.gitignore`.
 - If you want to share your trained models, do **not** push them to GitHub.
   Instead, upload them to HuggingFace, Dropbox, Google Drive, or similar,
   and provide a download script (e.g. `scripts/download_models.sh`).
+
 
 
 
