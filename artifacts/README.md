@@ -14,9 +14,13 @@ main pipeline.
 ## 📂 Folder structure
 
 artifacts/
+
 ├─ classes.txt # Class vocabulary (one Pokémon species per line)
+
 │
+
 ├─ train_dev_split.csv # 90% of dataset (after global filtering)
+
 ├─ test_split.csv # 10% held-out test set
 │
 ├─ folds/ # Stratified K-fold splits over train_dev
@@ -139,3 +143,4 @@ These are ignored by `.gitignore`.
 - If you want to share your trained models, do **not** push them to GitHub.
   Instead, upload them to HuggingFace, Dropbox, Google Drive, or similar,
   and provide a download script (e.g. `scripts/download_models.sh`).
+
