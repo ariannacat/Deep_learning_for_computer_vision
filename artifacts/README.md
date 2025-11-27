@@ -13,8 +13,7 @@ main pipeline.
 
 ## 📂 Folder structure
 
-artifacts/
-
+artifacts/\n
 ├─ classes.txt # Class vocabulary (one Pokémon species per line)
 
 │
@@ -143,4 +142,5 @@ These are ignored by `.gitignore`.
 - If you want to share your trained models, do **not** push them to GitHub.
   Instead, upload them to HuggingFace, Dropbox, Google Drive, or similar,
   and provide a download script (e.g. `scripts/download_models.sh`).
+
 
