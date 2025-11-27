@@ -71,7 +71,7 @@ training/
 
 Trained weights should be saved using the naming convention:
 
-``markdown
+```markdown
 best_<MODEL_NAME>_foldK.pth                 (Torchvision)
 yolo_cls_runs/<NAME>_foldK/weights/best.pt  (YOLO-CLS)
 ```
