@@ -17,7 +17,7 @@ Make sure you are in the project root:
 
 ```bash
 cd ~/Deep_learning_for_computer_vision
-
+```
 1. Create and activate a virtual environment
 ```bash
 python3 -m venv venv
