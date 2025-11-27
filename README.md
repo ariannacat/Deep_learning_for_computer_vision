@@ -28,8 +28,15 @@ source venv/bin/activate
 ```bash
 pip install -e .
 ```
+3. Install Tesseract OCR (required for text extraction):
+* MacOS:
+```bash
+brew install tesseract
+````
+* Windows:
+Download the installer from: https://github.com/UB-Mannheim/tesseract/wiki 
 
-3. Run the full pipeline on the example image
+4. Run the full pipeline on the example image
 ```bash
 pokeai run --image data/example.png --config configs/default.yaml
 ```
