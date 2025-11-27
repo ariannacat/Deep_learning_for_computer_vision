@@ -24,7 +24,8 @@ from .decision import advisor
 from .screengrab_parser import extract_from_screenshot, set_move_dictionary
 from .vision import predict_image
 from .data_models import Decision
-
+from difflib import get_close_matches
+from typing import List
 
 # ---------------------------------------------------------------------
 # Internal helpers
@@ -38,7 +39,7 @@ def _load_decision_data():
     Returns:
         df_pokemon, df_move_details, df_pokemon_moves
     """
-    df_pokemon, df_move_details, df_pokemon_moves = io_utils.load_decision_data()
+    df_pokemon, df_pokemon_moves, df_move_details = io_utils.load_datasets()
     return df_pokemon, df_move_details, df_pokemon_moves
 
 
@@ -79,7 +80,7 @@ def _extract_hp_percent(parse_result: Dict[str, Any]) -> float:
         return 100.0
 
 
-def _recognize_pokemon_from_sprites(parse_result: Dict[str, Any]) -> Tuple[str, str]:
+def _recognize_pokemon_from_sprites(parse_result: Dict[str, Any], cfg) -> Tuple[str, str]:
     """
     Use the cropped sprite images created by `extract_from_screenshot`
     to predict our Pokémon and the opponent with the current model.
@@ -97,17 +98,58 @@ def _recognize_pokemon_from_sprites(parse_result: Dict[str, Any]) -> Tuple[str, 
             "Check screengrab_parser.extract_from_screenshot."
         )
 
-    our_name = predict_image(own_path)
-    opp_name = predict_image(opp_path)
+    our_name, our_conf = predict_image(own_path, cfg)
+    opp_name, opp_conf = predict_image(opp_path, cfg)
     return our_name, opp_name
 
+def _canonicalize_moves(moves_ocr: List[str], df_move_details) -> List[str]:
+    """
+    Map OCR-detected move names to the closest canonical move names
+    from df_move_details['move'] using fuzzy matching.
+    """
+    valid_moves = (
+        df_move_details["move"]
+        .dropna()
+        .astype(str)
+        .str.strip()
+        .tolist()
+    )
+
+    canonical_moves: List[str] = []
+
+    # Optional: explicit overrides for known OCR errors
+    overrides = {
+        "substitution": "Submission",
+        "sumbission": "Submission",
+    }
+
+    for raw in moves_ocr:
+        if not raw:
+            continue
+
+        name = str(raw).strip()
+
+        # 1) Hard-coded fixes for very common OCR mistakes
+        key = name.lower()
+        if key in overrides:
+            canonical_moves.append(overrides[key])
+            continue
+
+        # 2) Fuzzy match against all known moves
+        match = get_close_matches(name, valid_moves, n=1, cutoff=0.65)
+        if match:
+            canonical_moves.append(match[0])
+        else:
+            canonical_moves.append(name)
+
+    return canonical_moves
 
 # ---------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------
 
 
-def run_pipeline(screenshot_path: str) -> Dict[str, Any]:
+def run_pipeline(screenshot_path: str, cfg: Dict[str, Any]) -> Dict[str, Any]:
     """
     Full pipeline: screenshot → parse → recognize → decide.
 
@@ -139,13 +181,15 @@ def run_pipeline(screenshot_path: str) -> Dict[str, Any]:
     parse_result = extract_from_screenshot(img)
 
     # 5) Recognize Pokémon from sprite crops
-    our_name, opp_name = _recognize_pokemon_from_sprites(parse_result)
+    our_name, opp_name = _recognize_pokemon_from_sprites(parse_result, cfg)
 
     # 6) Infer our HP percentage
     hp_percent = _extract_hp_percent(parse_result)
 
     # 7) Moves from OCR (list of strings)
-    moves_ocr = parse_result.get("moves", []) or []
+    moves_ocr_raw = parse_result.get("moves", []) or []
+    # Canonicalize moves using move details CSV (fix OCR like "substitution" -> "Submission")
+    moves_ocr = _canonicalize_moves(moves_ocr_raw, df_move_details)
 
     # 8) Build battle state for the advisor
     state = {

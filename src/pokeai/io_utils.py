@@ -2,6 +2,7 @@
 Utility functions for loading CSV datasets used by the decision engine.
 """
 
+from .preprocess_decision_data import preprocess_decision_data
 from pathlib import Path
 from typing import List, Union
 import pandas as pd
@@ -37,6 +38,11 @@ def load_datasets(
     df_pokemon = pd.read_csv(p)
     df_pokemon_moves = pd.read_csv(mset)
     df_move_details = pd.read_csv(md)
+
+    # Apply the same cleaning as in DECISION_ALGORITHM.ipynb
+    df_pokemon, df_pokemon_moves, df_move_details = preprocess_decision_data(
+        df_pokemon, df_pokemon_moves, df_move_details
+    )
 
     return df_pokemon, df_pokemon_moves, df_move_details
 

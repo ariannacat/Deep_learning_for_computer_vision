@@ -26,6 +26,8 @@ import re
 from pathlib import Path
 from typing import List, Tuple, Union, Optional
 from .models import make_model, IMG_SIZE, IMAGENET_MEAN, IMAGENET_STD
+from pokeai.config import load_config
+from .io_utils import load_classes_txt
 
 import numpy as np
 import torch
@@ -45,23 +47,11 @@ except Exception:  # pragma: no cover
 # Device
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# Artifacts root (where classes.txt, folds, checkpoints live)
+# Artifacts
 ARTIFACTS = Path(os.getenv("POKEAI_ARTIFACTS", "artifacts")).resolve()
 
 # Dataset dir is only used as *fallback* if the given image path is relative
 DATASET_DIR = Path(os.getenv("POKEAI_DATASET_DIR", "data/dataset")).resolve()
-
-# Cross-validation config
-N_FOLDS = int(os.getenv("N_FOLDS", "5"))
-
-# Model name (same as in your notebook)
-MODEL_NAME = os.getenv("MODEL_NAME", "resnet18")  # e.g. vgg16, resnet50, yolov8n-cls
-MODEL_NAME_SAFE = re.sub(r"[^A-Za-z0-9_.-]+", "_", MODEL_NAME)
-
-# YOLO config
-USE_YOLO = MODEL_NAME.startswith("yolov8") and MODEL_NAME.endswith("-cls")
-YOLO_NAME = os.getenv("YOLO_NAME", "pokemon_yolo_cls")
-YOLO_RUNS = ARTIFACTS / "yolo_cls_runs"
 
 # ============================================================
 # Class vocabulary from artifacts/classes.txt
@@ -85,17 +75,17 @@ eval_tfms = transforms.Compose([
 # Checkpoint paths 
 # ============================================================
 
-def fold_name(fold_idx: int) -> str:
-    return f"{MODEL_NAME_SAFE}_fold{fold_idx}"
+def fold_name(fold_idx: int, model_name_safe) -> str:
+    return f"{model_name_safe}_fold{fold_idx}"
 
-def fold_ckpt_path(fold_idx: int) -> Path:
+def fold_ckpt_path(fold_idx: int, model_name_safe) -> Path:
     """
     Path of the per-fold checkpoint for Torchvision models.
     Matches your notebook:
 
-        artifacts/best_<MODEL_NAME_SAFE>_foldK.pth
+        artifacts/best_<model_name_safe>_foldK.pth
     """
-    return ARTIFACTS / f"best_{fold_name(fold_idx)}.pth"
+    return ARTIFACTS / f"best_{fold_name(fold_idx, model_name_safe)}.pth"
 
 # ============================================================
 # Helper: resolve input image path
@@ -124,17 +114,25 @@ def _resolve_image_path(path_or_rel: Union[str, Path]) -> Path:
 # Main API: predict_image
 # ============================================================
 
-def predict_image(path_or_rel: Union[str, Path]) -> Tuple[str, float]:
+def predict_image(path_or_rel: Union[str, Path], cfg: Dict[str, Any]) -> Tuple[str, float]:
     """
-    Predict a single image class using your original logic:
+    Predict a single image class using config-driven model settings.
 
-      • Torchvision (ResNet/VGG/etc.) → averages logits over CV folds
-      • YOLOv8-CLS → averages probabilities over CV folds
-
-    Returns:
-        (pred_name, confidence)
+    cfg["model"] is expected to contain:
+      - backend: "torchvision" or "yolo"
+      - name: model name, e.g. "resnet50" or "yolov8n-cls"
+      - folds: number of folds (int)
+      - yolo_name (optional): base name for YOLO runs, default "pokemon_yolo_cls"
     """
     img_path = _resolve_image_path(path_or_rel)
+    
+    model_cfg = cfg.get("model", {})
+    MODEL_NAME = model_cfg["name"]              
+    N_FOLDS = int(model_cfg["folds"])           
+    
+    USE_YOLO = USE_YOLO = model_cfg["backend"] == "yolo"
+
+    YOLO_NAME = model_cfg.get("yolo_name", "pokemon_yolo_cls")
 
     if USE_YOLO:
         if YOLO is None:
@@ -142,15 +140,15 @@ def predict_image(path_or_rel: Union[str, Path]) -> Tuple[str, float]:
                 "Ultralytics YOLO is not installed. "
                 "Install with: pip install ultralytics"
             )
-        return _predict_yolo_ensemble(img_path)
+        return _predict_yolo_ensemble(img_path, YOLO_NAME, N_FOLDS)
 
-    return _predict_torchvision_ensemble(img_path)
+    return _predict_torchvision_ensemble(img_path, MODEL_NAME, N_FOLDS)
 
 # ============================================================
 # Torchvision CV-ensemble prediction
 # ============================================================
 
-def _predict_torchvision_ensemble(img_path: Path) -> Tuple[str, float]:
+def _predict_torchvision_ensemble(img_path: Path, model_name: str, n_folds: int) -> Tuple[str, float]:
     """
     Mirror of your notebook logic:
     - apply eval_tfms
@@ -164,16 +162,18 @@ def _predict_torchvision_ensemble(img_path: Path) -> Tuple[str, float]:
     img = Image.open(img_path).convert("RGB")
     x = eval_tfms(img).unsqueeze(0).to(DEVICE)
 
+    model_name_safe = re.sub(r"[^A-Za-z0-9_.-]+", "_", model_name)
+
     logits_list = []
 
-    for fold_id in range(1, N_FOLDS + 1):
-        ckpt_path = fold_ckpt_path(fold_id)
+    for fold_id in range(1, n_folds + 1):
+        ckpt_path = fold_ckpt_path(fold_id, model_name_safe)
         if not ckpt_path.is_file():
             raise FileNotFoundError(
                 f"Missing checkpoint for fold {fold_id}: {ckpt_path}"
             )
 
-        model = make_model(MODEL_NAME, len(CLASSES), pretrained=False).to(DEVICE).eval()
+        model = make_model(model_name, len(CLASSES), pretrained=False).to(DEVICE).eval()
         sd = torch.load(ckpt_path, map_location=DEVICE)
         # In your test code you loaded directly with strict=True
         model.load_state_dict(sd, strict=True)
@@ -199,14 +199,15 @@ def _predict_torchvision_ensemble(img_path: Path) -> Tuple[str, float]:
 # YOLOv8-CLS CV-ensemble prediction
 # ============================================================
 
-def _best_yolo_weights_for_fold(fold_id: int) -> Path:
+def _best_yolo_weights_for_fold(fold_id: int, yolo_name: str) -> Path:
     """
     Find YOLO best.pt for a given fold, mirroring your naming:
 
         run_name = f"{YOLO_NAME}_fold{fold_id}"
         YOLO_RUNS / run_name / "weights" / "best.pt"
     """
-    run_name = f"{YOLO_NAME}_fold{fold_id}"
+    YOLO_RUNS = ARTIFACTS / "yolo_cls_runs"
+    run_name = f"{yolo_name}_fold{fold_id}"
     direct = YOLO_RUNS / run_name / "weights" / "best.pt"
     if direct.is_file():
         return direct
@@ -220,7 +221,7 @@ def _best_yolo_weights_for_fold(fold_id: int) -> Path:
     return candidates[0]
 
 
-def _predict_yolo_ensemble(img_path: Path) -> Tuple[str, float]:
+def _predict_yolo_ensemble(img_path: Path, yolo_name: str, n_folds: int) -> Tuple[str, float]:
     """
     Mirror of your notebook's YOLO ensemble logic:
     - for each fold, load YOLO best.pt
@@ -233,8 +234,8 @@ def _predict_yolo_ensemble(img_path: Path) -> Tuple[str, float]:
 
     probs_list = []
 
-    for fold_id in range(1, N_FOLDS + 1):
-        best_weights = _best_yolo_weights_for_fold(fold_id)
+    for fold_id in range(1, n_folds + 1):
+        best_weights = _best_yolo_weights_for_fold(fold_id, yolo_name)
         yolo_model = YOLO(str(best_weights))
         r = yolo_model.predict(str(img_path), verbose=False)
         probs_list.append(r[0].probs.data.cpu().numpy())

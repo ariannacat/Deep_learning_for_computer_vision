@@ -15,8 +15,9 @@ It is linked to the 'pokeai' terminal command via pyproject.toml:
 import argparse
 import json
 from pokeai.screengrab_parser import extract_from_screenshot
-from pokeai.pipeline import run
+from pokeai.pipeline import run_pipeline
 from pokeai.config import load_config
+from pokeai.vision import predict_image
 
 
 def main():
@@ -25,7 +26,12 @@ def main():
         description="Pokémon Battle Advisor CLI"
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
-
+    
+    # ------------------ recognize ------------------
+    p_recog = subparsers.add_parser("recognize", help="Recognize Pokémon only (sprites → names)")
+    p_recog.add_argument("--image", required=True, help="Path to screenshot")
+    p_recog.add_argument("--config", default="configs/default.yaml")
+ 
     # ------------------ parse ------------------
     p_parse = subparsers.add_parser("parse", help="Parse screenshot only (raw style)")
     p_parse.add_argument("--image", required=True, help="Path to screenshot")
@@ -75,15 +81,52 @@ def main():
 
     elif args.command == "run":
         cfg = load_config(args.config)
-        parse_result, decision = run(args.image, args.config)
+        from pokeai.pipeline import run_pipeline
+
+        result = run_pipeline(args.image, cfg)
 
         print("\n=== PARSED STATE ===")
-        print(json.dumps(parse_result.to_dict(), indent=2))
+        print(json.dumps(result["parse"], indent=2))
+
+        print("\n=== RECOGNITION ===")
+        print(json.dumps(result["recognition"], indent=2))
 
         print("\n=== DECISION ===")
-        print(json.dumps(decision.to_dict(), indent=2))
-
+        print(json.dumps(result["decision"], indent=2))
+       
         return
+    elif args.command == "recognize":
+     cfg = load_config(args.config)
+
+     # Load screenshot
+     import cv2
+     img = cv2.imread(args.image)
+     if img is None:
+         raise SystemExit(f"Error: cannot read image {args.image}")
+
+     # Extract UI elements (this produces sprite crops on disk)
+     parse_result = extract_from_screenshot(img)
+ 
+     # Recognize Pokémon
+     sprites = parse_result.get("sprites", {})
+     own_path = sprites.get("own_sprite_file")
+     opp_path = sprites.get("opp_sprite_file")
+ 
+     if not own_path or not opp_path:
+         raise SystemExit("Sprite filenames missing in parse result.")
+ 
+     our_name, our_conf = predict_image(own_path, cfg)
+     opp_name, opp_conf = predict_image(opp_path, cfg)
+ 
+     print("\n=== RECOGNITION ===")
+     print(f"Our Pokémon     : {our_name}  (conf={our_conf:.3f})")
+     print(f"Opponent Pokémon: {opp_name} (conf={opp_conf:.3f})")
+ 
+     print("\nSprite crops:")
+     print("  own:", own_path)
+     print("  opp:", opp_path)
+ 
+     return
 
 
 if __name__ == "__main__":

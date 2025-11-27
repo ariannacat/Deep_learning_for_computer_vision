@@ -3,14 +3,20 @@
 #   chmod +x scripts/download_models.sh    # make executable (run once)
 #   ./scripts/download_models.sh           # run script
 #
-# This script downloads model weights. 
+# This script downloads model weights from the artifacts folder
 
-echo "Downloading model weights..."
+#!/bin/bash
+# scripts/download_models.sh
+# Now: collect models from artifacts/ instead of downloading.
+
+set -e
+
+echo "Collecting model weights from artifacts/..."
+
 mkdir -p models/
 
-# Example (later you will replace these with real URLs)
-# gdown --id 1hZ3ABCDE -O models/yolo_cls/yolov8s-pokemon.pt
-# gdown --id 1gY6FGHIJ -O models/torchvision/resnet50/resnet50-pokemon_best.pt
+# Copy all Torch / YOLO weights from artifacts into models/
+find artifacts -type f \( -name "*.pt" -o -name "*.pth" \) -exec cp {} models/ \;
 
-echo "Done."
+echo "Done. Copied weights to models/."
 
