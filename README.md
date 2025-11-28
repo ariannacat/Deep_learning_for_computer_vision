@@ -32,7 +32,7 @@ pip install -e .
 3. Make the helpers executable
 ```bash
 chmod +x scripts/setup_tesseract.sh
-chmod +x scripts/dev_isntall.sh
+chmod +x scripts/dev_install.sh
 ```
 
 4. Install Tesseract OCR (required for text extraction):
