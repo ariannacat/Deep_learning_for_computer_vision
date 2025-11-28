@@ -102,48 +102,6 @@ def _recognize_pokemon_from_sprites(parse_result: Dict[str, Any], cfg) -> Tuple[
     opp_name, opp_conf = predict_image(opp_path, cfg)
     return our_name, opp_name
 
-def _canonicalize_moves(moves_ocr: List[str], df_move_details) -> List[str]:
-    """
-    Map OCR-detected move names to the closest canonical move names
-    from df_move_details['move'] using fuzzy matching.
-    """
-    valid_moves = (
-        df_move_details["move"]
-        .dropna()
-        .astype(str)
-        .str.strip()
-        .tolist()
-    )
-
-    canonical_moves: List[str] = []
-
-    # Optional: explicit overrides for known OCR errors
-    overrides = {
-        "substitution": "Submission",
-        "sumbission": "Submission",
-    }
-
-    for raw in moves_ocr:
-        if not raw:
-            continue
-
-        name = str(raw).strip()
-
-        # 1) Hard-coded fixes for very common OCR mistakes
-        key = name.lower()
-        if key in overrides:
-            canonical_moves.append(overrides[key])
-            continue
-
-        # 2) Fuzzy match against all known moves
-        match = get_close_matches(name, valid_moves, n=1, cutoff=0.65)
-        if match:
-            canonical_moves.append(match[0])
-        else:
-            canonical_moves.append(name)
-
-    return canonical_moves
-
 # ---------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------
@@ -187,9 +145,7 @@ def run_pipeline(screenshot_path: str, cfg: Dict[str, Any]) -> Dict[str, Any]:
     hp_percent = _extract_hp_percent(parse_result)
 
     # 7) Moves from OCR (list of strings)
-    moves_ocr_raw = parse_result.get("moves", []) or []
-    # Canonicalize moves using move details CSV (fix OCR like "substitution" -> "Submission")
-    moves_ocr = _canonicalize_moves(moves_ocr_raw, df_move_details)
+    moves_ocr = parse_result.get("moves", []) or []
 
     # 8) Build battle state for the advisor
     state = {
