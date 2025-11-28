@@ -57,10 +57,10 @@ REPORTS_DIR.mkdir(parents=True, exist_ok=True)
 TEST_SUM_DIR = ARTIFACTS / "test_summaries"
 TEST_SUM_DIR.mkdir(parents=True, exist_ok=True)
 
+persistent = NUM_WORKERS > 0
 # ============================================================
 # Classes & dataset
 # ============================================================
-
 
 CLASSES: List[str] = load_classes_txt(ARTIFACTS / "classes.txt")
 CLASS_TO_IDX: Dict[str, int] = {c: i for i, c in enumerate(CLASSES)}
@@ -95,6 +95,17 @@ class CSVImageDataset(Dataset):
         return img, y
 
 # ============================================================
+# Fold helpers: torchvision and YOLO
+# ============================================================
+
+def fold_name(fold_idx: int) -> str:
+    return f"{MODEL_NAME_SAFE}_fold{fold_idx}"
+
+
+def fold_ckpt_path(fold_idx: int) -> Path:
+    return ARTIFACTS / f"best_{fold_name(fold_idx)}.pth"
+
+# ============================================================
 # Evaluation
 # ============================================================
 
@@ -111,7 +122,7 @@ def evaluator():
             shuffle=False,
             num_workers=NUM_WORKERS,
             pin_memory=True,
-            persistent_workers=True,
+            persistent_workers=persistent,
         )
         y_true   = test_df["label"].map(CLASS_TO_IDX).to_numpy()
     else:
@@ -199,6 +210,8 @@ def evaluator():
 
     else:
         # ---- YOLOv8-CLS: average probabilities across folds ----
+        if YOLO is None:
+            raise RuntimeError("MODEL_NAME is YOLOv8-CLS but ultralytics.YOLO is not available.")
 
         def _best_weights_for_fold(fold_id: int) -> Path:
             run_name = f"{YOLO_NAME}_fold{fold_id}"
@@ -262,10 +275,10 @@ def evaluator():
         print("\nClassification report (head):")
         print(rep_txt[:1000], "...\n")
 
-    return summary_row, rep_txt
+    return summary_row, rep_txt, acc, f1, precision
 
 if __name__ == "__main__":
-    summary_row, rep_txt = evaluator()
+    summary_row, rep_txt, acc, f1, precision = evaluator()
 
     summary_csv = TEST_SUM_DIR / f"test_summary_{MODEL_NAME_SAFE}.csv"
     summary_row.to_csv(summary_csv, index=False)
