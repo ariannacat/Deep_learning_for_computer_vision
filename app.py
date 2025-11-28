@@ -1,23 +1,28 @@
 import gradio as gr
 import json
 import subprocess
+import os
 from PIL import Image
+from pathlib import Path
 
 def analyze_battle(image):
-    """Analizza una battaglia Pokémon e restituisce la mossa migliore"""
+    """Analyze a Pokemon battle and return the best move"""
     
     if image is None:
-        return "⚠️ Carica un'immagine prima!", ""
+        return "⚠️ Please upload an image first!", ""
     
     temp_path = "/tmp/battle_temp.png"
     image.save(temp_path)
     
     try:
+        # Get the directory where app.py is located
+        app_dir = Path(__file__).parent.absolute()
+        
         result = subprocess.run(
             ["pokeai", "run", "--image", temp_path, "--config", "configs/default.yml"],
             capture_output=True,
             text=True,
-            cwd="/Users/ivana/Deep_learning_for_computer_vision/Deep_learning_for_computer_vision"
+            cwd=str(app_dir)
         )
         
         output = result.stdout
@@ -67,13 +72,13 @@ def analyze_battle(image):
                     moves_html += f"<div style='background: #f5f5f5; padding: 12px 15px; margin: 8px 0; border-radius: 8px; border: 1px solid #e0e0e0; color: #666;'>{i}. {move}</div>"
             
             if not moves_html:
-                moves_html = '<p style="color: #999;">Nessuna mossa rilevata</p>'
+                moves_html = '<p style="color: #999;">No moves detected</p>'
             
             second_move_html = ""
             if second_move:
                 second_move_html = f"""
                 <div style='background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%); padding: 20px; border-radius: 12px; margin: 15px 0; box-shadow: 0 4px 12px rgba(0,0,0,0.15); color: white; text-align: center;'>
-                    <h3 style='margin: 0 0 8px 0; font-size: 16px; opacity: 0.9;'>🥈 Alternativa</h3>
+                    <h3 style='margin: 0 0 8px 0; font-size: 16px; opacity: 0.9;'>🥈 Alternative</h3>
                     <p style='font-size: 32px; margin: 8px 0; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);'>{second_move}</p>
                 </div>
                 """
@@ -82,47 +87,48 @@ def analyze_battle(image):
             <div style='font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; max-width: 650px; margin: 0 auto; padding: 20px;'>
                 <div style='display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px;'>
                     <div style='background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); color: white;'>
-                        <div style='font-size: 14px; opacity: 0.9; margin-bottom: 8px;'>👤 Il tuo Pokémon</div>
+                        <div style='font-size: 14px; opacity: 0.9; margin-bottom: 8px;'>👤 Your Pokemon</div>
                         <div style='font-size: 32px; font-weight: bold; margin: 8px 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);'>{our_pokemon}</div>
                         <div style='background: rgba(255,255,255,0.2); padding: 8px 12px; border-radius: 6px; display: inline-block; margin-top: 8px;'>
                             <span style='font-size: 18px;'>❤️ {our_hp:.0f}%</span>
                         </div>
                     </div>
                     <div style='background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); color: white;'>
-                        <div style='font-size: 14px; opacity: 0.9; margin-bottom: 8px;'>⚔️ Avversario</div>
+                        <div style='font-size: 14px; opacity: 0.9; margin-bottom: 8px;'>⚔️ Opponent</div>
                         <div style='font-size: 32px; font-weight: bold; margin: 8px 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);'>{opponent_pokemon}</div>
                     </div>
                 </div>
                 <div style='background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); padding: 30px; border-radius: 15px; margin: 25px 0; box-shadow: 0 6px 25px rgba(17,153,142,0.3); color: white; text-align: center;'>
-                    <h2 style='margin: 0 0 12px 0; font-size: 18px; opacity: 0.95; letter-spacing: 1px;'>🎯 MOSSA CONSIGLIATA</h2>
+                    <h2 style='margin: 0 0 12px 0; font-size: 18px; opacity: 0.95; letter-spacing: 1px;'>🎯 RECOMMENDED MOVE</h2>
                     <p style='font-size: 56px; margin: 15px 0; font-weight: 900; text-shadow: 3px 3px 6px rgba(0,0,0,0.3); letter-spacing: 3px;'>{best_move}</p>
                 </div>
                 {second_move_html}
                 <div style='background: white; padding: 20px; border-radius: 12px; margin: 20px 0; box-shadow: 0 3px 12px rgba(0,0,0,0.08); border: 2px solid #f0f0f0;'>
-                    <h3 style='margin: 0 0 15px 0; color: #333; font-size: 18px; border-bottom: 2px solid #e0e0e0; padding-bottom: 10px;'>📋 Tutte le Mosse</h3>
+                    <h3 style='margin: 0 0 15px 0; color: #333; font-size: 18px; border-bottom: 2px solid #e0e0e0; padding-bottom: 10px;'>📋 All Moves</h3>
                     {moves_html}
                 </div>
             </div>
             """
             return result_html, output
         else:
-            return "❌ Errore nel parsing del JSON", output
+            return "❌ Error parsing JSON output", output
     except Exception as e:
-        return f"<div style='background: #ffcdd2; padding: 20px; border-radius: 12px;'><h3>❌ Errore</h3><p>{str(e)}</p></div>", str(e)
+        return f"<div style='background: #ffcdd2; padding: 20px; border-radius: 12px;'><h3>❌ Error</h3><p>{str(e)}</p></div>", str(e)
 
-with gr.Blocks(title="Pokémon Battle Analyzer") as demo:
-    gr.Markdown("# 🎮 Pokémon Battle Analyzer")
-    gr.Markdown("### Carica uno screenshot e scopri la mossa vincente!")
+with gr.Blocks(title="Pokemon Battle Analyzer") as demo:
+    gr.Markdown("# 🎮 Pokemon Battle Analyzer")
+    gr.Markdown("### Upload a battle screenshot to get move recommendations!")
     with gr.Row():
         with gr.Column(scale=1):
-            image_input = gr.Image(type="pil", label="📸 Screenshot della Battaglia")
-            analyze_btn = gr.Button("🔍 Analizza Battaglia", variant="primary", size="lg")
+            image_input = gr.Image(type="pil", label="📸 Battle Screenshot")
+            analyze_btn = gr.Button("🔍 Analyze Battle", variant="primary", size="lg")
         with gr.Column(scale=1):
-            result_output = gr.HTML(label="📊 Analisi")
-    with gr.Accordion("🔧 Output Tecnico", open=False):
-        debug_output = gr.Textbox(label="Dettagli Debug", lines=15)
+            result_output = gr.HTML(label="📊 Analysis")
+    with gr.Accordion("🔧 Technical Output", open=False):
+        debug_output = gr.Textbox(label="Debug Details", lines=15)
     analyze_btn.click(fn=analyze_battle, inputs=image_input, outputs=[result_output, debug_output])
     gr.Markdown("---")
-    gr.Markdown("💡 **Suggerimento**: Usa screenshot nitidi per risultati ottimali!")
+    gr.Markdown("💡 **Tip**: Use clear screenshots for best results!")
 
 demo.launch(server_port=7861)
+EOF
