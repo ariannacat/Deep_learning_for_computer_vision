@@ -45,19 +45,6 @@ from training.preprocess_data import ARTIFACTS, DATASET_DIR, N_FOLDS, SEED
 from pokeai.models import make_model, IMG_SIZE, IMAGENET_STD, IMAGENET_STD
 from training.text_and_eval import BATCH_SIZE, NUM_WORKERS
 
-from training.preprocess_data import (
-    ARTIFACTS,
-    DATASET_DIR,
-    IMG_SIZE,
-    BATCH_SIZE,
-    NUM_WORKERS,
-    N_FOLDS,
-    SEED,
-    IMAGENET_MEAN,
-    IMAGENET_STD,
-    classes,
-    class_to_idx,
-)
 from pokeai.vision import (
     make_model,
     fold_ckpt_path,
@@ -76,6 +63,7 @@ REPORTS_DIR.mkdir(parents=True, exist_ok=True)
 TEST_SUM_DIR = ARTIFACTS / "test_summaries" / "augmented"
 TEST_SUM_DIR.mkdir(parents=True, exist_ok=True)
 
+CLASSES: List[str] = load_classes_txt(ARTIFACTS / "classes.txt")
 
 # ---------- Worker Init for Reproducibility ----------
 def worker_init_fn(worker_id: int) -> None:
