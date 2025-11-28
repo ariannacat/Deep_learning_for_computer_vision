@@ -41,8 +41,9 @@ from sklearn.metrics import (
 )
 from torch.utils.data import DataLoader
 
-from training.preprocess_data import ARTIFACTS, DATASET_DIR
+from training.preprocess_data import ARTIFACTS, DATASET_DIR, N_FOLDS, SEED
 from pokeai.models import make_model, IMG_SIZE, IMAGENET_STD, IMAGENET_STD
+from training.text_and_eval import BATCH_SIZE, NUM_WORKERS
 
 from training.preprocess_data import (
     ARTIFACTS,
