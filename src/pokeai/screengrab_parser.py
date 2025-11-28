@@ -1,13 +1,18 @@
 """
 Screenshot parser for Pokémon Showdown-style battle UI.
 
-Given a full screenshot (BGR numpy array), this module:
+Given a full screenshot, this module:
 - crops own and opponent sprites
 - auto-detects HP bars and estimates HP%
 - extracts the 4 move names from the bottom panel via OCR
 
 Main entry:
     extract_from_screenshot(bgr: np.ndarray) -> dict
+
+Note:
+    This tool relies on hard-coded bounding boxes tailored specifically to Pokémon Showdown screenshots.
+Future improvement: 
+    Replace the fixed coordinates with an object-detection pipeline to robustly locate sprites and UI elements.
 """
 
 
@@ -158,8 +163,7 @@ def split_moves_panel(panel_bgr: np.ndarray, pad: int = 8) -> List[np.ndarray]:
     """
     Bottom moves panel: 4 buttons in 1 row (1x4).
 
-    Returns, for each tile, the central band where the move name sits
-    (excluding the type icon on the left and PP area on the right).
+    Returns, for each tile, the central band where the move name sits.
     """
     H, W = panel_bgr.shape[:2]
 
@@ -194,7 +198,7 @@ def split_moves_panel(panel_bgr: np.ndarray, pad: int = 8) -> List[np.ndarray]:
 
 def extract_from_screenshot(bgr: np.ndarray) -> Dict[str, Any]:
     """
-    Main entry point: parse a BGR screenshot into structured information.
+    Main entry point: parse a screenshot into structured information.
 
     Returns a dict:
         {
