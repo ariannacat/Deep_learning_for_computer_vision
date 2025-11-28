@@ -88,7 +88,7 @@ YOLO_RUNS.mkdir(parents=True, exist_ok=True)
 # Classes & transforms
 # ============================================================
 
-CLASSES: List[str] = load_classes()
+CLASSES: List[str] = load_classes_txt(ARTIFACTS / "classes.txt")
 CLASS_TO_IDX: Dict[str, int] = {c: i for i, c in enumerate(CLASSES)}
 IDX_TO_CLASS: Dict[int, str] = {i: c for i, c in enumerate(CLASSES)}
 
