@@ -39,6 +39,9 @@ from sklearn.metrics import (
     confusion_matrix,
 )
 
+# Training constants
+from training.train_constants import SEED, BATCH_SIZE, NUM_WORKERS, LR, WEIGHT_DECAY, EPOCHS, VAL_PATIENCE, WARMUP_EPOCHS, MODEL_NAME
+
 # Shared from preprocessing
 from training.preprocess_data import ARTIFACTS, DATASET_DIR, FOLDS_DIR, N_FOLDS
 
@@ -59,18 +62,6 @@ except Exception:
 # Config
 # ============================================================
 
-SEED = int(os.getenv("SEED", "42"))
-DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-BATCH_SIZE = 32
-NUM_WORKERS = 2
-LR = 3e-4
-WEIGHT_DECAY = 1e-4
-EPOCHS = 30
-VAL_PATIENCE = 5
-WARMUP_EPOCHS = 5  # for VGG unfreeze
-
-MODEL_NAME = os.getenv("MODEL_NAME", "resnet18")  # e.g. resnet18, vgg16_bn, yolov8n-cls
 MODEL_NAME_SAFE = re.sub(r"[^A-Za-z0-9_.-]+", "_", MODEL_NAME)
 
 USE_YOLO = MODEL_NAME.startswith("yolov8") and MODEL_NAME.endswith("-cls")
