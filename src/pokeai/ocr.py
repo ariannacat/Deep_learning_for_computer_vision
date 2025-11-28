@@ -1,11 +1,11 @@
 """
 OCR utilities for Pokémon battle screenshots.
 
-These functions are adapted from your notebook:
-- tuned preprocessing (upsample, sharpen/contrast, threshold)
-- whitelisting
-- cleaning / normalization
-- dictionary-based correction
+Includes:
+- tuned preprocessing (upsampling, sharpening/contrast, thresholding)
+- character whitelisting
+- text cleaning and normalization
+- dictionary-based post-correction
 """
 
 from __future__ import annotations
