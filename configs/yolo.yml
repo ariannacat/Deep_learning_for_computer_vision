@@ -1,6 +1,0 @@
-# YOLO-specific configuration
-weights: "models/yolov8-pokemon.pt"
-img_size: 224
-conf_threshold: 0.5
-iou_threshold: 0.45
-
