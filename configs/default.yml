@@ -7,7 +7,7 @@ model:
   backend: "torchvision"   # or "yolo"
   name: "resnet50"
   folds: 5
-  dir: "models"
+  dir: "artifacts"
 
 paths:
   data_dir: "data"
