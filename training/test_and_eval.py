@@ -70,7 +70,7 @@ TEST_SUM_DIR.mkdir(parents=True, exist_ok=True)
 # ============================================================
 
 
-CLASSES: List[str] = load_classes()
+CLASSES: List[str] = load_classes_txt(ARTIFACTS / "classes.txt")
 CLASS_TO_IDX: Dict[str, int] = {c: i for i, c in enumerate(CLASSES)}
 
 eval_tfms = transforms.Compose(
