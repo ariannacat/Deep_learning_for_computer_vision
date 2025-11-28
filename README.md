@@ -28,7 +28,17 @@ source venv/bin/activate
 ```bash
 pip install -e .
 ```
-3. Install Tesseract OCR (required for text extraction):
+
+3. Make the helpers executable
+```bash
+chmod +x scripts/setup_tesseract.sh
+chmod +x scripts/dev_isntall.sh
+```
+
+4. Install Tesseract OCR (required for text extraction):
+```bash
+.\script\setup_tesserach.sh
+```
 * MacOS:
 ```bash
 brew install tesseract
