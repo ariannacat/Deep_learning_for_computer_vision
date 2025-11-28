@@ -41,7 +41,7 @@ chmod +x scripts/dev_install.sh
 ```
 5. Run the full pipeline on the example image
 ```bash
-pokeai run --image data/samples/example_1.png --config configs/default.yaml
+pokeai run --image data/samples/example_1.png --config configs/default.yml
 ```
 
 This will:
