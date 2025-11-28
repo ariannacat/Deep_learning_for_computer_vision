@@ -1,4 +1,4 @@
-# Pokémon Battle Advisor — Full Pipeline (Parse → Recognize → Decide)
+# Pokémon Battle Advisor — Full Pipeline 
 
 This repository implements a complete AI assistant for Pokémon battles:
 
