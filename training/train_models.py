@@ -46,7 +46,7 @@ from training.preprocess_data import ARTIFACTS, DATASET_DIR, FOLDS_DIR, N_FOLDS
 from pokeai.models import make_model, IMG_SIZE, IMAGENET_MEAN, IMAGENET_STD
 
 # Shared class loader
-from pokeai.io_utils import load_classes
+from pokeai.io_utils import load_classes_txt
 
 # YOLO (optional)
 try:
