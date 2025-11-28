@@ -17,6 +17,6 @@ DEVICE = torch.device(os.getenv("POKEAI_DEVICE", "cuda" if torch.cuda.is_availab
 
 # Default
 DEFAULT_CONFIG_PATH = Path(os.getenv("POKEAI_DEFAULT_CONFIG", CONFIGS_DIR / "default.yaml"))
-DEFAULT_POKEMON_CSV = Path(os.getenv("POKEAI_POKEMON_CSV", DATASET_DIR / "csv/pokemon_data.csv"))
-DEFAULT_MOVESET_CSV = Path(os.getenv("POKEAI_MOVESET_CSV", DATASET_DIR / "csv/movesets.csv"))
-DEFAULT_MOVE_DETAILS_CSV = Path(os.getenv("POKEAI_MOVE_DETAILS_CSV", DATASET_DIR / "csv/moves.csv"))
+DEFAULT_POKEMON_CSV = Path(os.getenv("POKEAI_POKEMON_CSV", "data/csv/pokemon_data.csv"))
+DEFAULT_MOVESET_CSV = Path(os.getenv("POKEAI_MOVESET_CSV", "data/csv/movesets.csv"))
+DEFAULT_MOVE_DETAILS_CSV = Path(os.getenv("POKEAI_MOVE_DETAILS_CSV", "data/csv/moves.csv"))
