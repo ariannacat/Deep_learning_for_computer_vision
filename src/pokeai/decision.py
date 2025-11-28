@@ -302,15 +302,24 @@ def advisor(
     if result is None:
         return Decision(best_move=None, reasoning={"error": "Pokémon not found in database"})
 
+    if "available_moves_ranking" in result and not result["available_moves_ranking"].empty:
+       available_ranking_head = (
+           result["available_moves_ranking"][["move_name", "damage_score", "rank"]]
+           .head(10)
+           .to_dict(orient="records")
+       )
+    else:
+       available_ranking_head = []   # no ranking available
+
+    warning = result.get("warning", None)
+
     return Decision(
         best_move=result["best_move"],
         reasoning={
             "damage_score": result["damage_score"],
             "rank_in_full_pool": result["rank_in_full_pool"],
-            "available_moves_ranking_head": result["available_moves_ranking"]
-                [["move_name", "damage_score", "rank"]]
-                .head(10)
-                .to_dict(orient="records"),
+            "available_moves_ranking_head": available_ranking_head,
+            "warning": warning
         },
     )
 
