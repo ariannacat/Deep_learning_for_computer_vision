@@ -37,7 +37,7 @@ from PIL import Image
 
 try:
     from ultralytics import YOLO
-except Exception:  # pragma: no cover
+except Exception:  
     YOLO = None
 
 # ============================================================
