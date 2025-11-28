@@ -32,7 +32,8 @@ from sklearn.metrics import (
 )
 
 from training.train_models import YOLO_RUNS, YOLO_NAME
-from training.train_constants import SEED, DEVICE, BATCH_SIZE, NUM_WORKERS, MODEL_NAME
+from pokeai.constants import DEVICE
+from training.train_constants import SEED, BATCH_SIZE, NUM_WORKERS, MODEL_NAME
 from training.preprocess_data import ARTIFACTS, DATASET_DIR, FOLDS_DIR, N_FOLDS
 from pokeai.models import make_model, IMG_SIZE, IMAGENET_MEAN, IMAGENET_STD
 from pokeai.io_utils import load_classes_txt
