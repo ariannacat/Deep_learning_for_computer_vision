@@ -10,7 +10,7 @@ import torch
 PROJECT_ROOT = Path(os.getenv("POKEAI_PROJECT_ROOT", Path(__file__).resolve().parents[2]))
 CONFIGS_DIR = Path(os.getenv("POKEAI_CONFIGS_DIR", PROJECT_ROOT / "configs"))
 DATA_DIR = Path(os.getenv("POKEAI_DATA_DIR", PROJECT_ROOT / "data"))
-ARTIFACTS = Path(os.getenv("POKEAI_ARTIFACTS", PROJECT_ROOT / "artifacts")).resolve()
+ARTIFACTS = Path(os.getenv("POKEAI_ARTIFACTS", "artifacts")).resolve()
 
 # Device
 DEVICE = torch.device(os.getenv("POKEAI_DEVICE", "cuda" if torch.cuda.is_available() else "cpu"))
