@@ -37,16 +37,9 @@ chmod +x scripts/dev_isntall.sh
 
 4. Install Tesseract OCR (required for text extraction):
 ```bash
-.\script\setup_tesserach.sh
+./scripts/setup_tesseract.sh
 ```
-* MacOS:
-```bash
-brew install tesseract
-````
-* Windows:
-Download the installer from: https://github.com/UB-Mannheim/tesseract/wiki 
-
-4. Run the full pipeline on the example image
+5. Run the full pipeline on the example image
 ```bash
 pokeai run --image data/samples/example_1.png --config configs/default.yaml
 ```
