@@ -27,7 +27,7 @@ import pandas as pd
 from PIL import Image
 from sklearn.model_selection import train_test_split, StratifiedKFold
 from tqdm.auto import tqdm
-from pokeai.constant import DATA_DIR, ARTIFACTS
+from pokeai.constants import DATA_DIR, ARTIFACTS
 
 # ------------------------
 # Reproducibility
