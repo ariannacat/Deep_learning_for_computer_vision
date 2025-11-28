@@ -64,6 +64,7 @@ TEST_SUM_DIR = ARTIFACTS / "test_summaries" / "augmented"
 TEST_SUM_DIR.mkdir(parents=True, exist_ok=True)
 
 CLASSES: List[str] = load_classes_txt(ARTIFACTS / "classes.txt")
+CLASS_TO_IDX: Dict[str, int] = {c: i for i, c in enumerate(CLASSES)}
 
 # ---------- Worker Init for Reproducibility ----------
 def worker_init_fn(worker_id: int) -> None:
