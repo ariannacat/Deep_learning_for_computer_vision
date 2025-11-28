@@ -51,7 +51,7 @@ DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 ARTIFACTS = Path(os.getenv("POKEAI_ARTIFACTS", "artifacts")).resolve()
 
 # Dataset dir is only used as *fallback* if the given image path is relative
-DATASET_DIR = Path(os.getenv("POKEAI_DATASET_DIR", "data/dataset")).resolve()
+DATASET_DIR = Path(os.getenv("POKEAI_DATASET_DIR", "data")).resolve()
 
 # ============================================================
 # Class vocabulary from artifacts/classes.txt
