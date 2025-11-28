@@ -29,6 +29,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import torch
+import re
 import torchvision.transforms as T
 import torchvision.transforms.functional as TF
 from PIL import Image, ImageEnhance
@@ -42,10 +43,15 @@ from sklearn.metrics import (
 from torch.utils.data import DataLoader
 
 from training.preprocess_data import ARTIFACTS, DATASET_DIR, N_FOLDS, SEED
-from pokeai.models import make_model, IMG_SIZE, IMAGENET_STD, IMAGENET_STD
-from training.text_and_eval import BATCH_SIZE, NUM_WORKERS
-from training.train_constants import DEVICE, MODEL_NAME
+from pokeai.models import make_model, IMG_SIZE, IMAGENET_MEAN, IMAGENET_STD
+from training.train_constants import BATCH_SIZE, NUM_WORKERS, MODEL_NAME
+from pokeai.constants import DEVICE
 from training.train_models import YOLO_NAME, YOLO_RUNS
+
+try:
+    from ultralytics import YOLO
+except Exception:
+    YOLO = None
 
 # ============================================================
 # Checkpoint paths 
@@ -247,7 +253,7 @@ def evaluate_with_augmentation(aug_name, augmentation_fn):
         # ---- Torchvision with augmentation ----
         test_ds = AugmentedCSVImageDataset(
             test_df, 
-            class_to_idx, 
+            CLASS_TO_IDX, 
             DATASET_DIR, 
             augmentation=augmentation_fn  # No base_transform needed!
         )
@@ -260,7 +266,7 @@ def evaluate_with_augmentation(aug_name, augmentation_fn):
             persistent_workers=True,
             worker_init_fn=worker_init_fn,  # FIX: Add worker init for reproducibility
         )
-        y_true = test_df["label"].map(class_to_idx).to_numpy()
+        y_true = test_df["label"].map(CLASS_TO_IDX).to_numpy()
         
         # CV ensemble over folds
         all_logits = []
@@ -291,7 +297,7 @@ def evaluate_with_augmentation(aug_name, augmentation_fn):
                 if k.endswith("fc.weight") and v.ndim == 2:
                     n_classes_trained = v.shape[0]; break
             if n_classes_trained is None:
-                n_classes_trained = len(classes)
+                n_classes_trained = len(CLASSES)
 
             m = make_model(MODEL_NAME, n_classes_trained, pretrained=False).to(DEVICE).eval()
             m.load_state_dict(clean_sd, strict=True)
@@ -336,7 +342,7 @@ def evaluate_with_augmentation(aug_name, augmentation_fn):
         rep_txt = classification_report(
             y_true,
             y_pred_idx,
-            target_names=classes,
+            target_names=CLASSES,
             zero_division=0,
         )
         print(f"\nClassification report preview:")
@@ -416,7 +422,6 @@ def evaluate_with_augmentation(aug_name, augmentation_fn):
             return np.vstack(probs_list)
 
         all_probs = []
-        name_to_idx = {c: i for i, c in enumerate(classes)}
 
         for fold_id in range(1, N_FOLDS + 1):
             best_w = _best_weights_for_fold(fold_id)
@@ -426,7 +431,7 @@ def evaluate_with_augmentation(aug_name, augmentation_fn):
 
         probs_ens = np.mean(np.stack(all_probs, axis=0), axis=0)
         y_pred_idx = probs_ens.argmax(axis=1)
-        y_true_idx = np.array([name_to_idx[n] for n in y_true_names])
+        y_true_idx = np.array([CLASS_TO_IDX[n] for n in y_true_names])
         confs = probs_ens.max(axis=1)
 
         # metrics
@@ -451,7 +456,7 @@ def evaluate_with_augmentation(aug_name, augmentation_fn):
         rep_txt = classification_report(
             y_true_idx,
             y_pred_idx,
-            target_names=classes,
+            target_names=CLASSES,
             zero_division=0,
         )
 
