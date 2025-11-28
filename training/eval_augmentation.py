@@ -47,6 +47,22 @@ from training.text_and_eval import BATCH_SIZE, NUM_WORKERS
 from training.train_constants import DEVICE, MODEL_NAME
 from training.train_models import YOLO_NAME, YOLO_RUNS
 
+# ============================================================
+# Checkpoint paths 
+# ============================================================
+
+def fold_name(fold_idx: int, model_name_safe) -> str:
+    return f"{model_name_safe}_fold{fold_idx}"
+
+def fold_ckpt_path(fold_idx: int, model_name_safe) -> Path:
+    """
+    Path of the per-fold checkpoint for Torchvision models.
+    Matches your notebook:
+
+        artifacts/best_<model_name_safe>_foldK.pth
+    """
+    return ARTIFACTS / f"best_{fold_name(fold_idx, model_name_safe)}.pth"
+
 MODEL_NAME_SAFE = re.sub(r"[^A-Za-z0-9_.-]+", "_", MODEL_NAME)
 USE_YOLO = MODEL_NAME.startswith("yolov8") and MODEL_NAME.endswith("-cls")
 
