@@ -44,9 +44,10 @@ from torch.utils.data import DataLoader
 from training.preprocess_data import ARTIFACTS, DATASET_DIR, N_FOLDS, SEED
 from pokeai.models import make_model, IMG_SIZE, IMAGENET_STD, IMAGENET_STD
 from training.text_and_eval import BATCH_SIZE, NUM_WORKERS
+from training.train_constants import DEVICE, MODEL_NAME
+from training.train_models import YOLO_NAME, YOLO_RUNS
 
 from pokeai.vision import (
-    make_model,
     fold_ckpt_path,
     DEVICE,
     MODEL_NAME,
