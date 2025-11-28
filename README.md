@@ -58,7 +58,7 @@ This will:
 You can use the built-in debug command:
 
 ```bash
-pokeai recognize --image data/example.png --config configs/default.yaml
+pokeai recognize --image data/samples/example_1.png --config configs/default.yaml
 ```
 ## Model Selection (Torchvision / YOLO)
 
@@ -168,13 +168,12 @@ Similarly, if you want to train some models on your own dataset, it is sufficien
 export POKEAI_DATASET_DIR = your/dataset/path
 ```
 
-Finally, ten examples for test running can be found in 
+Finally, some examples for test running can be found in 
 ```kotlin
 data/
   samples/
      example_1
      ...
-     example_10
 ```
 but you can use your own screenshot by
 ```bash
