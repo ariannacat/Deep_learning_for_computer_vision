@@ -27,6 +27,7 @@ import pandas as pd
 from PIL import Image
 from sklearn.model_selection import train_test_split, StratifiedKFold
 from tqdm.auto import tqdm
+from pokeai.constant import DATA_DIR, ARTIFACTS
 
 # ------------------------
 # Reproducibility
@@ -38,9 +39,7 @@ np.random.seed(SEED)
 # ------------------------
 # Paths & config
 # ------------------------
-ROOT = Path(__file__).resolve().parents[1]
-DATASET_DIR = Path(os.getenv("POKEAI_DATASET_DIR", ROOT / "data" / "dataset")).resolve()
-ARTIFACTS = Path(os.getenv("POKEAI_ARTIFACTS", ROOT / "artifacts")).resolve()
+DATASET_DIR = Path(os.getenv("POKEAI_DATASET_DIR", DATA_DIR / "dataset")).resolve()
 ARTIFACTS.mkdir(parents=True, exist_ok=True)
 
 FOLDS_DIR = ARTIFACTS / "folds"
