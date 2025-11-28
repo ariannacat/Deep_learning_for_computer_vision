@@ -2,8 +2,8 @@
 Shared vision model utilities (Torchvision architectures).
 
 Used by:
-- training scripts (training/train_models.py)
-- runtime inference (pokeai.vision)
+- training scripts 
+- runtime inference
 """
 
 from __future__ import annotations
