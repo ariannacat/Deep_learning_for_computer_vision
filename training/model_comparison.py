@@ -18,12 +18,8 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import pandas as pd
 
+from training.test_and_eval import REPORTS_DIR, TEST_SUM_DIR
 from training.preprocess_data import ARTIFACTS
-
-# Directories
-TEST_FS_DIR = ARTIFACTS / "test_summaries"
-REPORTS_DIR = ARTIFACTS / "reports"
-REPORTS_DIR.mkdir(parents=True, exist_ok=True)
 
 def compare_models(save_plot: bool = True) -> pd.DataFrame | None:
     """
@@ -34,12 +30,12 @@ def compare_models(save_plot: bool = True) -> pd.DataFrame | None:
     """
     df_test = pd.DataFrame()
 
-    csvs = sorted(TEST_FS_DIR.glob("*.csv"))
+    csvs = sorted(TEST_SUM_DIR.glob("*.csv"))
     if csvs:
         df_test = pd.concat((pd.read_csv(p) for p in csvs), ignore_index=True)
 
     if df_test.empty:
-        print(f"No test summaries found to compare in {TEST_FS_DIR}.")
+        print(f"No test summaries found to compare in {TEST_SUM_DIR}.")
         return None
 
     # ---- Aggregation across models on TEST set ----
