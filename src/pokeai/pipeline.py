@@ -24,7 +24,6 @@ from .decision import advisor
 from .screengrab_parser import extract_from_screenshot, set_move_dictionary
 from .vision import predict_image
 from .data_models import Decision
-from difflib import get_close_matches
 from typing import List
 
 # ---------------------------------------------------------------------
@@ -111,19 +110,16 @@ def run_pipeline(screenshot_path: str, cfg: Dict[str, Any]) -> Dict[str, Any]:
     """
     Full pipeline: screenshot → parse → recognize → decide.
 
-    Parameters
-    ----------
-    screenshot_path : str
-        Path to the battle screenshot (PNG/JPG).
+    Parameters:
+        screenshot_path - Path to the battle screenshot (PNG/JPG).
 
-    Returns
-    -------
-    result : dict
-        {
-          "parse": {...},          # raw output from extract_from_screenshot
-          "recognition": {...},   # recognized Pokémon + HP + OCR moves
-          "decision": {...},      # serialized Decision dataclass
-        }
+    Returns: 
+         result -
+             { 
+                "parse": {...},          # raw output from extract_from_screenshot
+                "recognition": {...},   # recognized Pokémon + HP + OCR moves
+                "decision": {...},      # serialized Decision dataclass
+             }
     """
 
     # 1) Load decision CSVs
