@@ -21,7 +21,7 @@ dependencies = [
   "opencv-python",        # use opencv-python-headless on servers/CI
   "pillow",
   "pytesseract",
-  "numpy",
+  "numpy<2",
   "pandas",
   "scikit-learn",
   "tqdm",
