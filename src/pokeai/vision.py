@@ -26,7 +26,7 @@ import re
 from pathlib import Path
 from typing import List, Tuple, Union, Optional
 from .models import make_model, IMG_SIZE, IMAGENET_MEAN, IMAGENET_STD
-from constants import DEVICE, ARTIFACTS, DATASET_DIR, CLASSES, IDX_TO_CLASS
+from constants import DEVICE, ARTIFACTS, DATASET_DIR
 from pokeai.config import load_config
 from .io_utils import load_classes_txt
 
@@ -40,19 +40,6 @@ try:
     from ultralytics import YOLO
 except Exception:  
     YOLO = None
-
-# ============================================================
-# Config / paths 
-# ============================================================
-
-# Device
-DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-# Artifacts
-ARTIFACTS = Path(os.getenv("POKEAI_ARTIFACTS", "artifacts")).resolve()
-
-# Dataset dir is only used as *fallback* if the given image path is relative
-DATASET_DIR = Path(os.getenv("POKEAI_DATASET_DIR", "data")).resolve()
 
 # ============================================================
 # Class vocabulary from artifacts/classes.txt
