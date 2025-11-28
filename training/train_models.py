@@ -72,7 +72,8 @@ USE_YOLO = MODEL_NAME.startswith("yolov8") and MODEL_NAME.endswith("-cls")
 
 FOLDS_ROOT = ARTIFACTS / "folds"
 
-# YOLO dirs
+# YOLO directories
+YOLO_WEIGHTS = os.getenv("YOLO_WEIGHTS", f"{MODEL_NAME_SAFE}.pt")
 YOLO_ROOT = ARTIFACTS / "yolo_cls_data"
 YOLO_RUNS = ARTIFACTS / "yolo_cls_runs"
 YOLO_NAME = os.getenv("YOLO_NAME", "pokemon_yolo_cls")
@@ -86,6 +87,8 @@ YOLO_RUNS.mkdir(parents=True, exist_ok=True)
 CLASSES: List[str] = load_classes_txt(ARTIFACTS / "classes.txt")
 CLASS_TO_IDX: Dict[str, int] = {c: i for i, c in enumerate(CLASSES)}
 IDX_TO_CLASS: Dict[int, str] = {i: c for i, c in enumerate(CLASSES)}
+
+persistent = NUM_WORKERS > 0
 
 train_tfms = transforms.Compose(
     [
@@ -151,11 +154,11 @@ def build_tv_loaders_for_fold(fold_id: int):
     test_ds  = CSVImageDataset(test_df,  CLASS_TO_IDX, DATASET_DIR, transform=eval_tfms)
 
     train_dl = DataLoader(train_ds, batch_size=BATCH_SIZE, shuffle=True,
-                          num_workers=NUM_WORKERS, pin_memory=True, persistent_workers=True)
+                          num_workers=NUM_WORKERS, pin_memory=True, persistent_workers=persistent)
     val_dl   = DataLoader(val_ds,   batch_size=BATCH_SIZE, shuffle=False,
-                          num_workers=NUM_WORKERS, pin_memory=True, persistent_workers=True)
+                          num_workers=NUM_WORKERS, pin_memory=True, persistent_workers=persistent)
     test_dl  = DataLoader(test_ds,  batch_size=BATCH_SIZE, shuffle=False,
-                          num_workers=NUM_WORKERS, pin_memory=True, persistent_workers=True)
+                          num_workers=NUM_WORKERS, pin_memory=True, persistent_workers=persistent)
     return train_dl, val_dl, test_dl, len(train_ds), len(val_ds), len(test_ds)
 
 # ------- Torchvision: CV-ready builders ----------------------
@@ -249,9 +252,9 @@ def trainer():
             val_ds   = CSVImageDataset(val_df,   CLASS_TO_IDX, DATASET_DIR, transform=eval_tfms)
 
             train_dl = DataLoader(train_ds, batch_size=BATCH_SIZE, shuffle=True,
-                                num_workers=NUM_WORKERS, pin_memory=True, persistent_workers=True)
+                                num_workers=NUM_WORKERS, pin_memory=True, persistent_workers=persistent)
             val_dl   = DataLoader(val_ds,   batch_size=BATCH_SIZE, shuffle=False,
-                                num_workers=NUM_WORKERS, pin_memory=True, persistent_workers=True)
+                                num_workers=NUM_WORKERS, pin_memory=True, persistent_workers=persistent)
 
             # Fresh model/optim/sched/scaler per fold
             model, criterion, optimizer, scheduler, scaler, ckpt_path = init_torchvision_for_fold(fold_id)
@@ -265,19 +268,22 @@ def trainer():
             def run_epoch(dataloader, train: bool):
                 model.train(train)
                 total_loss, total_correct, total = 0.0, 0, 0
-                for xb, yb in dataloader:
-                    xb, yb = xb.to(DEVICE), yb.to(DEVICE)
-                    with torch.cuda.amp.autocast(enabled=torch.cuda.is_available()):
-                        logits = model(xb)
-                        loss   = criterion(logits, yb)
-                    if train:
-                        optimizer.zero_grad(set_to_none=True)
-                        scaler.scale(loss).backward()
-                        scaler.step(optimizer)
-                        scaler.update()
-                    total_loss   += loss.item() * yb.size(0)
-                    total_correct += (logits.argmax(1) == yb).sum().item()
-                    total        += yb.size(0)
+                context = torch.enable_grad if train else torch.no_grad
+
+                with context():
+                 for xb, yb in dataloader:
+                     xb, yb = xb.to(DEVICE), yb.to(DEVICE)
+                     with torch.cuda.amp.autocast(enabled=torch.cuda.is_available()):
+                         logits = model(xb)
+                         loss   = criterion(logits, yb)
+                     if train:
+                         optimizer.zero_grad(set_to_none=True)
+                         scaler.scale(loss).backward()
+                         scaler.step(optimizer)
+                         scaler.update()
+                     total_loss   += loss.item() * yb.size(0)
+                     total_correct += (logits.argmax(1) == yb).sum().item()
+                     total        += yb.size(0)
                 return total_loss/total, total_correct/total
 
             for epoch in range(1, EPOCHS + 1):
@@ -300,10 +306,13 @@ def trainer():
                     f"val_loss {va_loss:.4f} acc {va_acc:.3f} | "
                     f"{time.time()-t0:.1f}s")
 
+                best_acc = 0.0
+               
                 # Early stopping on val loss
                 if va_loss < best_val - 1e-4:
                     best_val = va_loss; wait = 0
                     best_sd = {k: v.cpu() for k, v in model.state_dict().items()}
+                    best_acc = va_acc
                 else:
                     wait += 1
                     if wait >= VAL_PATIENCE:
@@ -320,7 +329,7 @@ def trainer():
                 "model": MODEL_NAME_SAFE,
                 "fold": fold_id,
                 "val_loss": best_val,
-                "val_acc": va_acc   # add this metric
+                "val_acc": best_acc  
             })
 
         print("\nCV summary (val_loss):", fold_summaries)
@@ -368,6 +377,10 @@ def trainer():
 
             # Train YOLO for this fold (per-fold run name)
             run_name = f"{YOLO_NAME}_fold{fold_id}"
+            if YOLO is None:
+                raise RuntimeError(
+                         "MODEL_NAME is YOLOv8-CLS but ultralytics is not installed or failed to import."
+                )
             yolo_model = YOLO(YOLO_WEIGHTS)
             yolo_model.train(
                 data=str(YOLO_FOLD_ROOT),           # has train/ and val/
