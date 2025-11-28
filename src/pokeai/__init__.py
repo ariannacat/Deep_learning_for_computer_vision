@@ -1,5 +1,10 @@
-"""pokeai: Pokémon battle advisor package."""
+"""
+pokeai: Pokémon battle advisor package.
 
-from . import constants
-
-__all__ = ["constants"]
+This package contains:
+- OCR utilities
+- Screenshot parsing
+- Vision models
+- Decision and pipeline logic
+- Configuration and constants
+"""
