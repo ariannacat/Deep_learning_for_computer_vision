@@ -1,11 +1,9 @@
 # Training Suite
 
-This folder contains all the scripts required to **prepare data**, **train models**,  
-**evaluate performance**, **compare models**, and **test robustness to augmentations**  
+This folder contains all the scripts required to **prepare data**, **train models**, **evaluate performance**, **compare models**, and **test robustness to augmentations**  
 for the Pokémon species classifier used by the main `pokeai` pipeline.
 
-The suite reproduces — without notebooks — the exact workflow used in the original
-research notebook:
+The pipeline followed is:
 
 > preprocess → train → evaluate → compare → robustness testing
 
@@ -46,9 +44,7 @@ The script:
 - trains one model per fold  
 - performs early stopping  
 - handles VGG warmup + unfreeze  
-- saves per-fold checkpoints into `artifacts/`:
-  - `best_<MODEL_NAME>_fold1.pth`
-  - …
+- saves per-fold checkpoints
 - saves per-fold validation summaries to:
   - `artifacts/fold_summaries/<MODEL_NAME>.csv`
 
@@ -60,6 +56,7 @@ python -m training.train_models
 
 Other options:
 ```bash
+export MODEL_NAME=resnet50
 export MODEL_NAME=vgg16_bn
 export MODEL_NAME=yolov8n-cls
 ```
@@ -94,8 +91,7 @@ python -m training.test_and_eval
 
 ---
 
-### **4. `eval_agumentation.py`**
-(*Note: filename currently misspelled in your repo as `eval_agumentation.py`*)
+### **4. `eval_augmentation.py`**
 
 Evaluates **model robustness** under several **test-time augmentations**:
 
@@ -134,7 +130,6 @@ Aggregates **all test summaries** from `test_and_eval.py`
 
 - a summary table comparing models  
 - an aggregated CSV  
-- an accuracy bar plot
 
 Uses all CSVs under:
 
@@ -144,27 +139,6 @@ artifacts/test_summaries/
 
 **Run:**
 ```bash
-python -m training.model_comparison
-```
-
----
-
-## 📌 Full training workflow
-
-```bash
-# 1. Prepare dataset splits
-python -m training.preprocess_data
-
-# 2. Train a model (5-fold CV)
-MODEL_NAME=resnet18 python -m training.train_models
-
-# 3. Evaluate on held-out test set
-MODEL_NAME=resnet18 python -m training.test_and_eval
-
-# 4. Evaluate under heavy augmentations (optional)
-MODEL_NAME=resnet18 python -m training.eval_agumentation
-
-# 5. Compare all trained models
 python -m training.model_comparison
 ```
 
