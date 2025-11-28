@@ -155,7 +155,7 @@ export POKEAI_DATASET_DIR = your/dataset/path
 ```
 
 Finally, ten examples for test running can be found in 
-``kotlin
+```kotlin
 data/
   samples/
      example_1
