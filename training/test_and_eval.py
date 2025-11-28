@@ -64,6 +64,7 @@ TEST_SUM_DIR.mkdir(parents=True, exist_ok=True)
 
 CLASSES: List[str] = load_classes_txt(ARTIFACTS / "classes.txt")
 CLASS_TO_IDX: Dict[str, int] = {c: i for i, c in enumerate(CLASSES)}
+IDX_TO_CLASS: Dict[int, str] = {i: c for i, c in enumerate(CLASSES)}
 
 eval_tfms = transforms.Compose(
     [
@@ -103,7 +104,7 @@ def evaluator():
     test_df = pd.read_csv(ARTIFACTS / "test_split.csv")
     if not USE_YOLO:
         # Torchvision test loader (build once)
-        test_ds  = CSVImageDataset(test_df, class_to_idx, DATASET_DIR, transform=eval_tfms)
+        test_ds  = CSVImageDataset(test_df, CLASS_TO_IDX, DATASET_DIR, transform=eval_tfms)
         test_dl  = DataLoader(
             test_ds,
             batch_size=BATCH_SIZE,
@@ -112,7 +113,7 @@ def evaluator():
             pin_memory=True,
             persistent_workers=True,
         )
-        y_true   = test_df["label"].map(class_to_idx).to_numpy()
+        y_true   = test_df["label"].map(CLASS_TO_IDX).to_numpy()
     else:
         # YOLO needs file paths and string labels
         test_paths   = test_df["path"].tolist()
@@ -225,7 +226,6 @@ def evaluator():
 
         # collect per-fold probs
         all_probs = []
-        name_to_idx = {c: i for i, c in enumerate(CL)}
 
         for fold_id in range(1, N_FOLDS + 1):
             best_w = _best_weights_for_fold(fold_id)
@@ -235,7 +235,7 @@ def evaluator():
 
         probs_ens = np.mean(np.stack(all_probs, axis=0), axis=0)   # [N, C]
         y_pred_idx = probs_ens.argmax(axis=1)
-        y_true_idx = np.array([name_to_idx[n] for n in y_true_names])
+        y_true_idx = np.array([CLASS_TO_IDX[n] for n in y_true_names])
         confs = probs_ens.max(axis=1)
 
         # metrics (with precision)
@@ -256,7 +256,7 @@ def evaluator():
         rep_txt = classification_report(
             y_true_idx,
             y_pred_idx,
-            target_names=classes,
+            target_names=CLASSES,
             zero_division=0,
         )
         print("\nClassification report (head):")
