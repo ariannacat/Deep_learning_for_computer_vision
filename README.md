@@ -38,7 +38,7 @@ Download the installer from: https://github.com/UB-Mannheim/tesseract/wiki
 
 4. Run the full pipeline on the example image
 ```bash
-pokeai run --image data/example.png --config configs/default.yaml
+pokeai run --image data/samples/example_1.png --config configs/default.yaml
 ```
 
 This will:
@@ -151,7 +151,20 @@ The loader then automatically:
 
 Similarly, if you want to train some models on your own dataset, it is sufficient to set
 ```bash
-export POKEAI_DATASET = your/dataset/path
+export POKEAI_DATASET_DIR = your/dataset/path
+```
+
+Finally, ten examples for test running can be found in 
+``kotlin
+data/
+  samples/
+     example_1
+     ...
+     example_10
+```
+but you can use your own screenshot by
+```bash
+export POKEAI_DATA_DIR = your/examples_folder/path
 ```
 
 # Project Structure
