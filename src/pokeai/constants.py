@@ -3,15 +3,14 @@ Global constants for the pokeai package.
 """
 
 from pathlib import Path
+import os
+import torch
 
-# Root paths (can be useful later)
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-CONFIGS_DIR = PROJECT_ROOT / "configs"
-DATA_DIR = PROJECT_ROOT / "data"
-MODELS_DIR = PROJECT_ROOT / "models"
+PROJECT_ROOT = Path(os.getenv("POKEAI_PROJECT_ROOT", Path(__file__).resolve().parents[2]))
+CONFIGS_DIR = Path(os.getenv("POKEAI_CONFIGS_DIR", PROJECT_ROOT / "configs"))
+DATASET_DIR = Path(os.getenv("POKEAI_DATASET_DIR", PROJECT_ROOT / "data"))
+DEFAULT_CONFIG_PATH = Path(os.getenv("POKEAI_DEFAULT_CONFIG", CONFIGS_DIR / "default.yaml"))
 
-# Default config file used by CLI and scripts
-DEFAULT_CONFIG_PATH = CONFIGS_DIR / "default.yaml"
+DEVICE = torch.device(os.getenv("POKEAI_DEVICE", "cuda" if torch.cuda.is_available() else "cpu"))
 
-# You can add other global thresholds/constants later, e.g.:
-DEFAULT_CONFIDENCE_THRESHOLD = 0.5
+ARTIFACTS = Path(os.getenv("POKEAI_ARTIFACTS", PROJECT_ROOT / "artifacts")).resolve()
