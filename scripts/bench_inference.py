@@ -5,7 +5,7 @@ Benchmark model inference speed for sanity checks.
 
 import argparse
 import time
-from pokeai.vision import load_model, predict_image
+from pokeai.vision import predict_image
 from pokeai.config import load_config
 
 def main():
@@ -15,10 +15,9 @@ def main():
     args = ap.parse_args()
 
     cfg = load_config(args.config)
-    model = load_model(cfg)
 
     t0 = time.time()
-    label, conf = predict_image(args.image, model, cfg)
+    label, conf = predict_image(args.image, cfg)
     dt = time.time() - t0
 
     print(f"Prediction: {label} ({conf:.3f}) in {dt:.4f}s")
@@ -26,4 +25,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
