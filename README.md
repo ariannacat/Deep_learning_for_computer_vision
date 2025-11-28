@@ -138,12 +138,21 @@ data/
     moves.csv
     movesets.csv
 ```
-The loader automatically:
+To use your own it is sufficient to run:
+```bash
+export POKEAI_POKEMON_CSV = your/path
+export POKEAI_MOVESET_CSV = your/path
+export POKEAI_MOVE_DETAILS_CSV = your/path
+```
+The loader then automatically:
 * cleans move power/accuracy (power_clean, accuracy_clean)
 * computes weakness/resistance counters in Pokémon data
 * normalizes names
 
-To use your own dataset folder (for  
+Similarly, if you want to train some models on your own dataset, it is sufficient to set
+```bash
+export POKEAI_DATASET = your/dataset/path
+```
 
 # Project Structure
 (aggiorno domani non ho tempo)
