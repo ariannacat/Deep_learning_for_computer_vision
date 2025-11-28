@@ -130,7 +130,7 @@ POKEAI_ARTIFACTS/
   classes.txt
 ```
 # Data Requirements
-Place your datasets under:
+Default move datasets for the decision mechanism can be found:
 ```kotlin
 data/
   csv/
@@ -142,6 +142,8 @@ The loader automatically:
 * cleans move power/accuracy (power_clean, accuracy_clean)
 * computes weakness/resistance counters in Pokémon data
 * normalizes names
+
+To use your own dataset folder (for  
 
 # Project Structure
 (aggiorno domani non ho tempo)
