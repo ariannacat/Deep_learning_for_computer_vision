@@ -180,9 +180,6 @@ but you can use your own screenshot by
 export POKEAI_DATA_DIR = your/examples_folder/path
 ```
 
-# Project Structure
-
-
 # License
 MIT License (see LICENSE file)
 
