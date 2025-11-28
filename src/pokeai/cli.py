@@ -103,27 +103,27 @@ def main():
         if img is None:
             raise SystemExit(f"Error: cannot read image {args.image}")
 
-       parse_result = extract_from_screenshot(img)
+        parse_result = extract_from_screenshot(img)
 
-       sprites = parse_result.get("sprites", {})
-       own_path = sprites.get("own_sprite_file")
-       opp_path = sprites.get("opp_sprite_file")
+        sprites = parse_result.get("sprites", {})
+        own_path = sprites.get("own_sprite_file")
+        opp_path = sprites.get("opp_sprite_file")
  
-       if not own_path or not opp_path:
-           raise SystemExit("Sprite filenames missing in parse result.")
+        if not own_path or not opp_path:
+            raise SystemExit("Sprite filenames missing in parse result.")
  
-       our_name, our_conf = predict_image(own_path, cfg)
-       opp_name, opp_conf = predict_image(opp_path, cfg)
+        our_name, our_conf = predict_image(own_path, cfg)
+        opp_name, opp_conf = predict_image(opp_path, cfg)
    
-       print("\n=== RECOGNITION ===")
-       print(f"Our Pokémon     : {our_name}  (conf={our_conf:.3f})")
-       print(f"Opponent Pokémon: {opp_name} (conf={opp_conf:.3f})")
+        print("\n=== RECOGNITION ===")
+        print(f"Our Pokémon     : {our_name}  (conf={our_conf:.3f})")
+        print(f"Opponent Pokémon: {opp_name} (conf={opp_conf:.3f})")
    
-       print("\nSprite crops:")
-       print("  own:", own_path)
-       print("  opp:", opp_path)
+        print("\nSprite crops:")
+        print("  own:", own_path)
+        print("  opp:", opp_path)
  
-     return
+        return
 
 
 if __name__ == "__main__":
