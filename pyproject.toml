@@ -28,7 +28,8 @@ dependencies = [
   "matplotlib",
   "seaborn",
   "pyyaml",                
-  "rich"               
+  "rich",
+  "gradio"
 ]
 
 
