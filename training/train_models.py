@@ -40,7 +40,8 @@ from sklearn.metrics import (
 )
 
 # Training constants
-from training.train_constants import SEED, BATCH_SIZE, NUM_WORKERS, LR, WEIGHT_DECAY, EPOCHS, VAL_PATIENCE, WARMUP_EPOCHS, MODEL_NAME
+from training.train_constants import (SEED, BATCH_SIZE, NUM_WORKERS, LR, WEIGHT_DECAY,
+             EPOCHS, VAL_PATIENCE, WARMUP_EPOCHS, MODEL_NAME)
 
 # Shared from preprocessing
 from training.preprocess_data import ARTIFACTS, DATASET_DIR, FOLDS_DIR, N_FOLDS
@@ -50,6 +51,9 @@ from pokeai.models import make_model, IMG_SIZE, IMAGENET_MEAN, IMAGENET_STD
 
 # Shared class loader
 from pokeai.io_utils import load_classes_txt
+
+# Device
+from pokeai.constants import DEVICE
 
 # YOLO (optional)
 try:
@@ -142,9 +146,9 @@ def build_tv_loaders_for_fold(fold_id: int):
     val_df   = pd.read_csv(fold_dir / "val.csv")
     test_df  = pd.read_csv(ARTIFACTS / "test_split.csv")
 
-    train_ds = CSVImageDataset(train_df, class_to_idx, DATASET_DIR, transform=train_tfms)
-    val_ds   = CSVImageDataset(val_df,   class_to_idx, DATASET_DIR, transform=eval_tfms)
-    test_ds  = CSVImageDataset(test_df,  class_to_idx, DATASET_DIR, transform=eval_tfms)
+    train_ds = CSVImageDataset(train_df,CLASS_TO_IDX, DATASET_DIR, transform=train_tfms)
+    val_ds   = CSVImageDataset(val_df,   CLASS_TO_IDX, DATASET_DIR, transform=eval_tfms)
+    test_ds  = CSVImageDataset(test_df,  CLASS_TO_IDX, DATASET_DIR, transform=eval_tfms)
 
     train_dl = DataLoader(train_ds, batch_size=BATCH_SIZE, shuffle=True,
                           num_workers=NUM_WORKERS, pin_memory=True, persistent_workers=True)
@@ -155,7 +159,8 @@ def build_tv_loaders_for_fold(fold_id: int):
     return train_dl, val_dl, test_dl, len(train_ds), len(val_ds), len(test_ds)
 
 # ------- Torchvision: CV-ready builders ----------------------
-num_classes = len(classes)
+USE_PRETRAINED = True
+num_classes = len(CLASSES)
 
 def init_torchvision_for_fold(fold_id: int):
     """
@@ -240,8 +245,8 @@ def trainer():
             val_df   = pd.read_csv(fold_dir / "val.csv")
 
             # Build datasets/dataloaders for this fold
-            train_ds = CSVImageDataset(train_df, class_to_idx, DATASET_DIR, transform=train_tfms)
-            val_ds   = CSVImageDataset(val_df,   class_to_idx, DATASET_DIR, transform=eval_tfms)
+            train_ds = CSVImageDataset(train_df, CLASS_TO_IDX, DATASET_DIR, transform=train_tfms)
+            val_ds   = CSVImageDataset(val_df,   CLASS_TO_IDX, DATASET_DIR, transform=eval_tfms)
 
             train_dl = DataLoader(train_ds, batch_size=BATCH_SIZE, shuffle=True,
                                 num_workers=NUM_WORKERS, pin_memory=True, persistent_workers=True)
