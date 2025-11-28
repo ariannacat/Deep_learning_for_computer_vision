@@ -3,15 +3,10 @@ Utility functions for loading CSV datasets used by the decision engine.
 """
 
 from .preprocess_decision_data import preprocess_decision_data
+from .constants import DEFAULT_POKEMON_CSV, DEFAULT_MOVESET_CSV, DEFAULT_MOVE_DETAILS_CSV
 from pathlib import Path
 from typing import List, Union
 import pandas as pd
-
-
-DEFAULT_POKEMON_CSV = "data/csv/pokemon_data.csv"
-DEFAULT_MOVESET_CSV = "data/csv/movesets.csv"
-DEFAULT_MOVE_DETAILS_CSV = "data/csv/moves.csv"
-
 
 def load_datasets(
     pokemon_path: str = DEFAULT_POKEMON_CSV,
