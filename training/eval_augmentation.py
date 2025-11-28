@@ -47,15 +47,8 @@ from training.text_and_eval import BATCH_SIZE, NUM_WORKERS
 from training.train_constants import DEVICE, MODEL_NAME
 from training.train_models import YOLO_NAME, YOLO_RUNS
 
-from pokeai.vision import (
-    fold_ckpt_path,
-    DEVICE,
-    MODEL_NAME,
-    MODEL_NAME_SAFE,
-    USE_YOLO,
-    YOLO_NAME,
-    YOLO_RUNS,
-)
+MODEL_NAME_SAFE = re.sub(r"[^A-Za-z0-9_.-]+", "_", MODEL_NAME)
+USE_YOLO = MODEL_NAME.startswith("yolov8") and MODEL_NAME.endswith("-cls")
 
 # ---------- Directories ----------
 REPORTS_DIR = ARTIFACTS / "reports" / "augmented"
