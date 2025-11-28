@@ -132,6 +132,17 @@ POKEAI_ARTIFACTS/
   ...
   classes.txt
 ```
+# User-Friendly Interface
+
+If you prefer to use the tool as a web interface, run
+
+```bash
+python app.py
+```
+
+and copy-paste the URL on your web browser. 
+You can then play with the tool uploading your showdown screenshots!
+
 # Data Requirements
 Default move datasets for the decision mechanism can be found:
 ```kotlin
@@ -171,7 +182,7 @@ export POKEAI_DATA_DIR = your/examples_folder/path
 ```
 
 # Project Structure
-(aggiorno domani non ho tempo)
+
 
 # License
 MIT License (see LICENSE file)
