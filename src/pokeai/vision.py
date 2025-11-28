@@ -26,7 +26,7 @@ import re
 from pathlib import Path
 from typing import List, Tuple, Union, Optional
 from .models import make_model, IMG_SIZE, IMAGENET_MEAN, IMAGENET_STD
-from constants import DEVICE, ARTIFACTS, DATA_DIR
+from .constants import DEVICE, ARTIFACTS, DATA_DIR
 from pokeai.config import load_config
 from .io_utils import load_classes_txt
 
