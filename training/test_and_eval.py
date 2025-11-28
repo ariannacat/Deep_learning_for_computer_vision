@@ -46,13 +46,6 @@ except Exception:
 # Config
 # ============================================================
 
-SEED = int(os.getenv("SEED", "42"))
-DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-BATCH_SIZE  = 32
-NUM_WORKERS = 2
-
-MODEL_NAME = os.getenv("MODEL_NAME", "resnet18")
 MODEL_NAME_SAFE = re.sub(r"[^A-Za-z0-9_.-]+", "_", MODEL_NAME)
 USE_YOLO = MODEL_NAME.startswith("yolov8") and MODEL_NAME.endswith("-cls")
 
