@@ -149,7 +149,7 @@ def evaluator():
                 if k.endswith("fc.weight") and v.ndim == 2:
                     n_classes_trained = v.shape[0]; break
             if n_classes_trained is None:
-                n_classes_trained = len(classes)
+                n_classes_trained = len(CLASSES)
 
             m = make_model(MODEL_NAME, n_classes_trained, pretrained=False).to(DEVICE).eval()
             m.load_state_dict(clean_sd, strict=True)
@@ -190,7 +190,7 @@ def evaluator():
         rep_txt = classification_report(
             y_true,
             y_pred_idx,
-            target_names=classes,
+            target_names=CLASSES,
             zero_division=0,
         )
         print("\nClassification report (head):")
@@ -225,7 +225,7 @@ def evaluator():
 
         # collect per-fold probs
         all_probs = []
-        name_to_idx = {c: i for i, c in enumerate(classes)}
+        name_to_idx = {c: i for i, c in enumerate(CL)}
 
         for fold_id in range(1, N_FOLDS + 1):
             best_w = _best_weights_for_fold(fold_id)
