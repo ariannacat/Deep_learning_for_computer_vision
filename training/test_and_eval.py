@@ -31,6 +31,7 @@ from sklearn.metrics import (
     confusion_matrix,
 )
 
+from training.train_models import YOLO_RUNS, YOLO_NAME
 from training.train_constants import SEED, DEVICE, BATCH_SIZE, NUM_WORKERS, MODEL_NAME
 from training.preprocess_data import ARTIFACTS, DATASET_DIR, FOLDS_DIR, N_FOLDS
 from pokeai.models import make_model, IMG_SIZE, IMAGENET_MEAN, IMAGENET_STD
@@ -48,10 +49,6 @@ except Exception:
 
 MODEL_NAME_SAFE = re.sub(r"[^A-Za-z0-9_.-]+", "_", MODEL_NAME)
 USE_YOLO = MODEL_NAME.startswith("yolov8") and MODEL_NAME.endswith("-cls")
-
-YOLO_RUNS = ARTIFACTS / "yolo_cls_runs"
-YOLO_NAME = os.getenv("YOLO_NAME", "pokemon_yolo_cls")
-YOLO_RUNS.mkdir(parents=True, exist_ok=True)
 
 REPORTS_DIR = ARTIFACTS / "reports"
 REPORTS_DIR.mkdir(parents=True, exist_ok=True)
@@ -200,7 +197,6 @@ def evaluator():
 
     else:
         # ---- YOLOv8-CLS: average probabilities across folds ----
-        YOLO_RUNS = ARTIFACTS / "yolo_cls_runs"  # ensure it matches training
 
         def _best_weights_for_fold(fold_id: int) -> Path:
             run_name = f"{YOLO_NAME}_fold{fold_id}"
