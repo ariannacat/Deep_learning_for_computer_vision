@@ -57,17 +57,12 @@ except Exception:
 # Checkpoint paths 
 # ============================================================
 
-def fold_name(fold_idx: int, model_name_safe) -> str:
-    return f"{model_name_safe}_fold{fold_idx}"
+def fold_name(fold_idx: int) -> str:
+    return f"{MODEL_NAME_SAFE}_fold{fold_idx}"
 
-def fold_ckpt_path(fold_idx: int, model_name_safe) -> Path:
-    """
-    Path of the per-fold checkpoint for Torchvision models.
-    Matches your notebook:
 
-        artifacts/best_<model_name_safe>_foldK.pth
-    """
-    return ARTIFACTS / f"best_{fold_name(fold_idx, model_name_safe)}.pth"
+def fold_ckpt_path(fold_idx: int) -> Path:
+    return ARTIFACTS / f"best_{fold_name(fold_idx)}.pth"
 
 MODEL_NAME_SAFE = re.sub(r"[^A-Za-z0-9_.-]+", "_", MODEL_NAME)
 USE_YOLO = MODEL_NAME.startswith("yolov8") and MODEL_NAME.endswith("-cls")
@@ -363,13 +358,14 @@ def evaluate_with_augmentation(aug_name, augmentation_fn):
 
     else:
         # ---- YOLO with augmentation ----
-        print(f"[WARNING] YOLO augmentation requires image preprocessing - implementing simplified version")
+        if USE_YOLO and YOLO is None:
+           raise RuntimeError(
+                "MODEL_NAME is YOLOv8-CLS but ultralytics.YOLO is not available."
+           )
         
         # For YOLO, we need to save augmented images temporarily
         test_paths = test_df["path"].tolist()
         y_true_names = test_df["label"].tolist()
-        
-        YOLO_RUNS = ARTIFACTS / "yolo_cls_runs"
         
         def _best_weights_for_fold(fold_id: int) -> Path:
             run_name = f"{YOLO_NAME}_fold{fold_id}"
