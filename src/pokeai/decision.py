@@ -213,8 +213,9 @@ def choose_best_move(attacker_name, defender_name, attacker_hp_percent,
             'best_move': available_moves_ocr[0],  
             'damage_score': 0,
             'rank_in_full_pool': 999,
+            'available_moves_ranking': available_ranking,
             'full_ranking': full_ranking.head(10),
-            'warning': 'Mosse OCR non trovate nel database'
+            'warning': 'OCR moves not found in the database'
         }
     
     # 3. Choose the best among the 4
