@@ -9,7 +9,7 @@ import torch
 # Directories
 PROJECT_ROOT = Path(os.getenv("POKEAI_PROJECT_ROOT", Path(__file__).resolve().parents[2]))
 CONFIGS_DIR = Path(os.getenv("POKEAI_CONFIGS_DIR", PROJECT_ROOT / "configs"))
-DATASET_DIR = Path(os.getenv("POKEAI_DATASET_DIR", PROJECT_ROOT / "data/dataset"))
+DATASET_DIR = Path(os.getenv("POKEAI_DATASET_DIR", PROJECT_ROOT / "data"))
 ARTIFACTS = Path(os.getenv("POKEAI_ARTIFACTS", PROJECT_ROOT / "artifacts")).resolve()
 
 # Device
