@@ -107,7 +107,7 @@ This environment variable tells the system:
 * where classes.txt is located
 * where to look for weight files
 * where YOLO run folders live
-* 
+  
 The vision system reads model settings from your config file:
 ```yaml
 model:
