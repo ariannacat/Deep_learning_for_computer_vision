@@ -143,6 +143,63 @@ python app.py
 and copy-paste the URL on your web browser. 
 You can then play with the tool uploading your showdown screenshots!
 
+## Troubleshooting — Gradio Port Error
+
+If running the web interface with:
+
+```bash
+python app.py
+```
+produces the following error:
+
+```bash
+OSError: Cannot find empty port in range: 7861-7861
+You can specify a different port by setting the GRADIO_SERVER_PORT environment variable
+or passing the `server_port` parameter to `launch()`.
+```
+it means that port 7861 is already in use on your system.
+
+
+✅ Fix 1 — Change the port in app.py (recommended)
+Open app.py and replace:
+
+```bash
+demo.launch(server_port=7861)
+```
+with:
+
+```bash
+demo.launch(server_port=7862)   # you can choose any free port
+```
+
+or simply:
+
+```bash
+demo.launch()
+```
+# Gradio will automatically pick a free port
+Then run again:
+
+
+```bash
+python app.py
+```
+
+✅ Fix 2 — Free the port (optional)
+If you want to stop the process using port 7861:
+
+```bash
+lsof -i :7861
+```
+Note the PID (e.g., 12345), then kill it:
+
+
+```bash
+kill 12345
+```
+
+After freeing the port, python app.py will work normally.
+
 # Data Requirements
 Default move datasets for the decision mechanism can be found:
 ```kotlin
