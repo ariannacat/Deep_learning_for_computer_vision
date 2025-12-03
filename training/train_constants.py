@@ -10,4 +10,4 @@ VAL_PATIENCE = int(os.getenv("VAL_PATIENCE", "5"))
 WARMUP_EPOCHS = int(os.getenv("WARMUP_EPOCHS", "5"))
 
 # Model
-MODEL_NAME = os.getenv("MODEL_NAME", "resnet18") 
+MODEL_NAME = os.getenv("MODEL_NAME", "resnet50") 
