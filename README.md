@@ -177,7 +177,7 @@ or simply:
 ```bash
 demo.launch()
 ```
-# Gradio will automatically pick a free port
+**Gradio will automatically pick a free port**
 Then run again:
 
 
