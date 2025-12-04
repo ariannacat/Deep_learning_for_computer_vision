@@ -132,7 +132,7 @@ POKEAI_ARTIFACTS/
   ...
   classes.txt
 ```
-# User-Friendly Interface
+## User-Friendly Interface
 
 If you prefer to use the tool as a web interface, run
 
@@ -143,7 +143,7 @@ python app.py
 and copy-paste the URL on your web browser. 
 You can then play with the tool uploading your showdown screenshots!
 
-## Troubleshooting — Gradio Port Error
+### Troubleshooting — Gradio Port Error
 
 If running the web interface with:
 
@@ -200,7 +200,7 @@ kill 12345
 
 After freeing the port, python app.py will work normally.
 
-# Data Requirements
+## Data Requirements
 Default move datasets for the decision mechanism can be found:
 ```kotlin
 data/
@@ -237,7 +237,7 @@ but you can use your own screenshot by
 export POKEAI_DATA_DIR = your/examples_folder/path
 ```
 
-# License
+## License
 MIT License (see LICENSE file)
 
 
